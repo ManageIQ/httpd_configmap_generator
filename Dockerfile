@@ -12,7 +12,8 @@ LABEL name="auth-config-httpd" \
 ## For ruby
 ENV RUBY_GEMS_ROOT=/opt/rubies/ruby-2.3.1/lib/uby/gems/2.3.0 \
     PATH=$PATH:/opt/rubies/ruby-2.3.1/bin \
-    LANG=en_US.UTF-8
+    LANG=en_US.UTF-8 \
+    REF=master
 
 ## Install repos
 RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
@@ -29,9 +30,12 @@ RUN ruby-install ruby 2.3.1 -- --disable-intall-doc && rm -rf /usr/local/src/* &
 ENV TERM=xterm \
     CONTAINER_ROOT=/opt/httpd-auth-config
 
-RUN mkdir -p ${CONTAINER_ROOT}
+## GIT clone httpd-auth-config
+RUN mkdir -p ${CONTAINER_ROOT} && \
+    curl -L https://github.com/abellotti/httpd-auth-config/tarball/${REF} | tar vxz -C ${CONTAINER_ROOT} --strip 1
+
+## Change workdir to the container
 WORKDIR ${CONTAINER_ROOT}
-COPY docker-assets/httpd-auth-config ${CONTAINER_ROOT}
 
 ## Setup container application
 RUN cd ${CONTAINER_ROOT} && \
