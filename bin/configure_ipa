@@ -1,0 +1,35 @@
+#! /usr/bin/env ruby
+#
+# Helper script for configuring container for IPA authentication
+#
+# Stdout: httpd auth configuration map
+# Stderr: any errors during configuration
+#
+#
+
+require 'trollop'
+
+module AuthConfig
+  module Ipa
+    VERSION="1.0"
+    CONFIGURE_COMMAND = File.basename($PROGRAM_NAME)
+
+    opts = Trollop.options do
+      version "#{CONFIGURE_COMMAND} #{VERSION} - Httpd IPA Authentication Configuration Script"
+      banner <<-EOS
+
+    #{version}
+
+    Usage: #{CONFIGURE_COMMAND} [options] [--help]
+
+    options are:
+    EOS
+      opt :host,         "Application Domain"
+      opt :ipaserver,    "IPA Server Fqdn"
+      opt :ipadomain,    "Domain of IPA Server"
+      opt :iparealm,     "Realm of IPA Server"
+      opt :ipaprincipal, "IPA Server Principal"
+      opt :ipapassword,  "IPA Server Password"
+    end
+  end
+end
