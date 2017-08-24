@@ -1,0 +1,56 @@
+#! /usr/bin/env ruby
+#
+# Script for configuring container with external authentication
+#
+# Stdout: httpd auth configuration map
+# Stderr: any errors during configuration
+#
+
+Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
+
+require 'trollop'
+
+CMD = File.basename($PROGRAM_NAME)
+VERSION = Httpd::AuthConfig::VERSION.freeze
+
+def error_msg(msg)
+  $stderr.puts msg
+  exit 1
+end
+
+def debug_msg(msg)
+  $stderr.puts "DEBUG: #{msg}"
+end
+
+module AuthConfig
+  class Cli
+    def run_configure(auth_type, cmd_options)
+      auth_config = Httpd::AuthConfig.new_config(auth_type)
+
+      opts = Trollop.options do
+        version "#{CMD} #{VERSION} - Httpd Auth Configuration script"
+        banner <<-EOS
+      #{version}
+
+      Usage: #{CMD} auth_type [options]
+
+      #{CMD} options are:
+      EOS
+        opt :version, "Version of the #{CMD} command",
+            :default => "", :short => "-V"
+        auth_config.required_options.each do |option, description|
+          opt option.to_sym, description
+        end
+        auth_config.optional_options.each do |option, description|
+          opt option.to_sym, description
+        end
+      end
+    end
+  end
+end
+
+if ARGV.empty?
+  error_msg "Usage: #{CMD} auth_type [options]"
+else
+  AuthConfig::Cli.new.run_configure(ARGV.shift, ARGV)
+end

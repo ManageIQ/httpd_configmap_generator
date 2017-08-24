@@ -1,16 +1,16 @@
 module Httpd
   module AuthConfig
     class Ipa
-      def self.options_required
-        super.merge(
+      def required_options
+        Httpd::AuthConfig.required_options.merge(
           :ipaserver    => "IPA Server Fqdn",
           :ipaprincipal => "IPA Server Principal",
           :ipapassword  => "IPA Server Password"
         )
       end
 
-      def self.options_optional
-        super.merge(
+      def optional_options
+        Httpd::AuthConfig.optional_options.merge(
           :ipadomain => "Domain of IPA Server",
           :iparealm  => "Realm of IPA Server"
         )

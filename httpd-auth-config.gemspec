@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec", "~> 3.0"
 
-  s.add_dependency "awesome_spawn",     "~> 1.4"
+  s.add_dependency "activesupport",     ">=5.0"
   s.add_dependency "trollop",           "~> 2.1"
+  s.add_dependency "awesome_spawn",     "~> 1.4"
 end

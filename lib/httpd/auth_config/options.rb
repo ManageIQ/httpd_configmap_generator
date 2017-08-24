@@ -1,12 +1,12 @@
 module Httpd
   module AuthConfig
-    def self.options_required
+    def self.required_options
       {
         :host => "Application Domain"
       }
     end
 
-    def self.options_optional
+    def self.optional_options
       {
       }
     end
