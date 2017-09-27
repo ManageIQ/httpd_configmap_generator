@@ -14,16 +14,16 @@ ENV REF=master
 
 ## For httpd-auth-config
 ENV TERM=xterm \
-    CONTAINER_ROOT=/opt/httpd-auth-config
+    APPLICATION_ROOT=/opt/httpd-auth-config
 
 ## GIT clone httpd-auth-config
-RUN mkdir -p ${CONTAINER_ROOT} && \
-    curl -L https://github.com/abellotti/httpd-auth-config/tarball/${REF} | tar vxz -C ${CONTAINER_ROOT} --strip 1
+RUN mkdir -p ${APPLICATION_ROOT} && \
+    curl -L https://github.com/abellotti/httpd-auth-config/tarball/${REF} | tar vxz -C ${APPLICATION_ROOT} --strip 1
 
 ## Change workdir to the container
-WORKDIR ${CONTAINER_ROOT}
+WORKDIR ${APPLICATION_ROOT}
 
-## Setup container application
-RUN cd ${CONTAINER_ROOT} && \
+## Setup application
+RUN cd ${APPLICATION_ROOT} && \
     bundle install
 
