@@ -25,10 +25,14 @@ end
 module AuthConfig
   class Cli
     def run_configure(auth_type, cmd_options)
-      auth_config = Httpd::AuthConfig.new_config(auth_type)
+      begin
+        auth_config = Httpd::AuthConfig.new_config(auth_type)
+      rescue => err
+        error_msg(err.to_s)
+      end
 
       opts = Trollop.options do
-        version "#{CMD} #{VERSION} - Httpd Auth Configuration script"
+        version "#{CMD} #{VERSION} - Httpd External Auth Configuration script"
         banner <<-EOS
       #{version}
 
@@ -38,19 +42,24 @@ module AuthConfig
       EOS
         opt :version, "Version of the #{CMD} command",
             :default => "", :short => "-V"
-        auth_config.required_options.each do |option, description|
-          opt option.to_sym, description
+        auth_config.required_options.each do |key, key_options|
+          opt key, key_options[:description], :default => key_options[:default] || "", :required => true
         end
-        auth_config.optional_options.each do |option, description|
-          opt option.to_sym, description
+        auth_config.optional_options.each do |key, key_options|
+          opt key, key_options[:description], :default => key_options[:default] || ""
         end
       end
+
+      auth_config.configure(opts)
     end
   end
 end
 
 if ARGV.empty?
-  error_msg "Usage: #{CMD} auth_type [options]"
+  error_msg "
+Usage: #{CMD} auth_type [--help | options]
+Supported auth_type: #{Httpd::AuthConfig.supported_auth_types.join(', ')}
+"
 else
   AuthConfig::Cli.new.run_configure(ARGV.shift, ARGV)
 end
