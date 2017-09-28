@@ -3,6 +3,8 @@ require "httpd/auth_config/options"
 require "httpd/auth_config/base"
 require "httpd/auth_config/ipa"
 require "httpd/auth_config/principal"
+require "httpd/auth_config/network"
+require "httpd/auth_config/file"
 
 module Httpd
   module AuthConfig

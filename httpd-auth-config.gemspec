@@ -1,6 +1,5 @@
-# lib = $:.push File.expand_path("../lib", __FILE__)
-# $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-$:.push File.expand_path("../lib", __FILE__)
+lib = File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 # Declare Gem's Version
 require "httpd/auth_config"
@@ -15,7 +14,8 @@ Gem::Specification.new do |s|
   s.description   = "The Httpd AuthConfig"
   s.licenses      = ["Apache-2.0"]
 
-  s.files         = Dir["{app,lib}/**/*", "LICENSE.txt", "Rakefile", "README.md"]
+  s.files         = `git ls-files -- lib/*`.split("\n")
+  s.files        += %w(LICENSE.txt README.md)
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rspec", "~> 3.0"
