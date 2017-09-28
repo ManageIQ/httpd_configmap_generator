@@ -14,7 +14,7 @@ module Httpd
       end
 
       def host_reachable?(host)
-        require 'net/ping'
+        require "net/ping"
         Net::Ping::External.new(host).ping
       end
     end

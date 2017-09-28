@@ -1,4 +1,4 @@
-require 'awesome_spawn'
+require "awesome_spawn"
 
 module Httpd
   module AuthConfig
