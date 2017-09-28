@@ -1,3 +1,5 @@
+require 'pathname'
+
 module Httpd
   module AuthConfig
     class Base
@@ -15,6 +17,12 @@ module Httpd
 
       def domain
         opts[:host].gsub(/^([^.]+\.)/, '') if opts[:host].present? && opts[:host].include?('.')
+      end
+
+      def template_directory
+        @template_directory ||= begin
+          Pathname.new(Bundler.locked_gems.specs.select { |g| g.name == "httpd-authconfig" }.first.gem_dir).join("templates")
+        end
       end
     end
   end
