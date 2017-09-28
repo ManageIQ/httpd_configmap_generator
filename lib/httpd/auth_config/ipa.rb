@@ -22,11 +22,27 @@ module Httpd
       def configure(opts)
         @opts = opts
         service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
-        puts "Kerberos Principal: #{service.name}"
+        puts "Kerberos Principal: #{service.name} - Skipping #{IPA_INSTALL_COMMAND}"
+        return
+        AwesomeSpawn.run!(IPA_INSTALL_COMMAND,
+                          :params => [
+                            "-N", :force_join, :fixed_primary, :unattended, {
+                              :realm=     => realm,
+                              :domain=    => domain,
+                              :server=    => opts[:ipaserver],
+                              :principal= => opts[:principal],
+                              :password=  => opts[:password]
+                            }
+                          ])
       end
 
       def configured?
         File.exist?(SSSD_CONFIG)
+      end
+
+      def unconfigure
+        return unless configured?
+        AwesomSpawn.run(IPA_INSTALL_COMMAND, :params => [:uninstall, :unattended])
       end
 
       def realm

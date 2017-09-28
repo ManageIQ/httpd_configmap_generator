@@ -2,7 +2,7 @@ require 'awesome_spawn'
 
 module Httpd
   module AuthConfig
-    class Principal < Ipa
+    class Principal < Base
       attr_accessor :hostname
       attr_accessor :realm        # EXAMPLE.COM
       attr_accessor :service      # HTTP
