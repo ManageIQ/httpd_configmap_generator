@@ -27,27 +27,6 @@ module Httpd
         @realm = @domain = nil
       end
 
-      def required_options
-        Httpd::AuthConfig.required_options.merge(
-          :ipaserver   => { :description => "IPA Server Fqdn"     },
-          :ipapassword => { :description => "IPA Server Password" }
-        )
-      end
-
-      def optional_options
-        Httpd::AuthConfig.optional_options.merge(
-          :ipaprincipal => { :description => "IPA Server Principal", :default => "admin" },
-          :ipadomain    => { :description => "Domain of IPA Server" },
-          :iparealm     => { :description => "Realm of IPA Server"  }
-        )
-      end
-
-      def configure(opts)
-        @opts = opts
-        service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
-        puts "Kerberos Principal: #{service.name}"
-      end
-
       def realm
         domain.upcase
       end
