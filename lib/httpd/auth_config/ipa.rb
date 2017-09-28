@@ -39,6 +39,9 @@ module Httpd
                               :password=  => opts[:password]
                             }
                           ])
+        configure_ipa_http_service
+        configure_pam
+        configure_sssd
         enable_kerberos_dns_lookups
       end
 
@@ -63,6 +66,15 @@ module Httpd
         @domain ||= domain_from_host(opts[:ipaserver]) if opts[:ipaserver].present?
         @domain ||= super
         @domain
+      end
+
+      def configure_ipa_http_service
+        AwesomeSpawn.run!("/usr/bin/kinit", :params => [:principal], :stdin_data => opts[:password])
+        service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
+        service.register
+        AwesomeSpawn.run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipaserver], "-k" => HTTP_KEYTAB, "-p" => service.name})
+        FileUtils.chown(APACHE_USER, nil, HTTP_KEYTAB)
+        FileUtils.chmod(0o600, HTTP_KEYTAB)
       end
     end
   end
