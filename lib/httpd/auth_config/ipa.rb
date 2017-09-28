@@ -21,6 +21,11 @@ module Httpd
 
       def configure(opts)
         @opts = opts
+        unconfigure if configured? && opts[:force]
+        if configured?
+          puts "#{self.class.name} Already Configured"
+          return
+        end
         service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
         puts "Kerberos Principal: #{service.name} - Skipping #{IPA_INSTALL_COMMAND}"
         return
@@ -34,6 +39,7 @@ module Httpd
                               :password=  => opts[:password]
                             }
                           ])
+        enable_kerberos_dns_lookups
       end
 
       def configured?

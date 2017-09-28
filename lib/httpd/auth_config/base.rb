@@ -1,8 +1,10 @@
 require "pathname"
 require "httpd/auth_config/base/file"
+require "httpd/auth_config/base/config"
 require "httpd/auth_config/base/network"
 require "httpd/auth_config/base/principal"
 require "httpd/auth_config/base/sssd"
+require "httpd/auth_config/base/pam"
 require "httpd/auth_config/base/kerberos"
 
 module Httpd
@@ -26,10 +28,12 @@ module Httpd
       attr_accessor :opts
       attr_accessor :realm
       attr_accessor :domain
+      attr_accessor :timestamp
 
       def initialize(opts = {})
         @opts = opts
         @realm = @domain = nil
+        @timestamp = Time.current.strftime(TIMESTAMP_FORMAT)
       end
     end
   end
