@@ -1,6 +1,9 @@
 module Httpd
   module AuthConfig
     class Ipa < Base
+      IPA_INSTALL_COMMAND  = "/usr/sbin/ipa-client-install".freeze
+      IPA_GETKEYTAB        = "/usr/sbin/ipa-getkeytab".freeze
+
       def required_options
         Httpd::AuthConfig.required_options.merge(
           :ipaserver   => { :description => "IPA Server Fqdn"     },

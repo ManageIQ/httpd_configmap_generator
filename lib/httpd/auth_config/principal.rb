@@ -23,12 +23,12 @@ module Httpd
       private
 
       def exist?
-        AwesomeSpawn.run("/usr/bin/ipa", :params => ["-e", "skip_version_check=1", "service-find", "--principal", name]).success?
+        AwesomeSpawn.run(IPA_COMMAND, :params => ["-e", "skip_version_check=1", "service-find", "--principal", name]).success?
       end
 
       def request
         # Using --force because these services tend not to be in dns. This is like VERIFY_NONE.
-        AwesomeSpawn.run!("/usr/bin/ipa", :params => ["-e", "skip_version_check=1", "service-add", "--force", name])
+        AwesomeSpawn.run!(IPA_COMMAND, :params => ["-e", "skip_version_check=1", "service-add", "--force", name])
       end
     end
   end
