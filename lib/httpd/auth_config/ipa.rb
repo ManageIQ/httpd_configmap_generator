@@ -25,6 +25,10 @@ module Httpd
         puts "Kerberos Principal: #{service.name}"
       end
 
+      def configured?
+        File.exist?(SSSD_CONFIG)
+      end
+
       def realm
         @realm ||= opts[:iparealm] if opts[:iparealm].present?
         @realm ||= domain
