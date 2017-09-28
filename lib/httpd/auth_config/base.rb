@@ -1,4 +1,6 @@
 require "pathname"
+require "httpd/auth_config/base/file"
+require "httpd/auth_config/base/network"
 
 module Httpd
   module AuthConfig

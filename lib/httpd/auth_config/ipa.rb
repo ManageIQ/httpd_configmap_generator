@@ -38,6 +38,7 @@ module Httpd
 
       def domain
         @domain ||= opts[:ipadomain] if opts[:ipadomain].present?
+        @domain ||= domain_from_host(opts[:ipaserver]) if opts[:ipaserver].present?
         @domain ||= super
         @domain
       end
