@@ -61,6 +61,11 @@ module Httpd
           Pathname.new(Bundler.locked_gems.specs.select { |g| g.name == "httpd-authconfig" }.first.gem_dir).join("templates")
         end
       end
+
+      def host_reachable?(host)
+        require 'net/ping'
+        Net::Ping::External.new(host).ping
+      end
     end
   end
 end
