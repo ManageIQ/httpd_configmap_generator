@@ -16,14 +16,16 @@ ENV REF=master
 ENV TERM=xterm \
     AUTH_CONFIG_DIRECTORY=/opt/httpd-auth-config
 
-## GIT clone httpd-auth-config
-RUN mkdir -p ${AUTH_CONFIG_DIRECTORY} && \
-    curl -L https://github.com/abellotti/httpd-auth-config/tarball/${REF} | tar vxz -C ${AUTH_CONFIG_DIRECTORY} --strip 1
+## Need git
+RUN yum install -y git
 
-## Change workdir to the container
-WORKDIR ${AUTH_CONFIG_DIRECTORY}
-
-## Setup application
-RUN cd ${AUTH_CONFIG_DIRECTORY} && \
+## Fetch and build the httpd-auth-config gem
+RUN mkdir -p ${AUTH_CONFIG_DIRECTORY}                                   && \
+    curl -L https://github.com/abellotti/httpd-auth-config/tarball/${REF}  \
+      | tar vxz -C ${AUTH_CONFIG_DIRECTORY} --strip 1                   && \
+    cd ${AUTH_CONFIG_DIRECTORY}                                         && \
     bundle install
+
+## Set the working directory of the container
+WORKDIR ${AUTH_CONFIG_DIRECTORY}
 
