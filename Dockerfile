@@ -26,6 +26,9 @@ RUN mkdir -p ${AUTH_CONFIG_DIRECTORY}                                   && \
     cd ${AUTH_CONFIG_DIRECTORY}                                         && \
     bundle install
 
+## Copy minimalistic container-environment for bringing up container
+COPY docker-assets/container-environment /etc/container-environment
+
 ## Set the working directory of the container
 WORKDIR ${AUTH_CONFIG_DIRECTORY}
 
