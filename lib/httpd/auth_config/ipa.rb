@@ -4,6 +4,13 @@ module Httpd
       IPA_INSTALL_COMMAND  = "/usr/sbin/ipa-client-install".freeze
       IPA_GETKEYTAB        = "/usr/sbin/ipa-getkeytab".freeze
 
+      def auth
+        {
+          :type          => "ipa",
+          :configuration => "external"
+        }
+      end
+
       def required_options
         Httpd::AuthConfig.required_options.merge(
           :ipaserver   => { :description => "IPA Server Fqdn"     },
@@ -53,8 +60,11 @@ module Httpd
           return
         end
         service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
-        puts "Kerberos Principal: #{service.name} - Skipping #{IPA_INSTALL_COMMAND}"
-        return
+        unless ENV["AUTH_CONFIG_DIRECTORY"]
+          puts "Kerberos Principal: #{service.name}"
+          puts "Not running in auth-config container - Skipping #{IPA_INSTALL_COMMAND}"
+          return
+        end
         AwesomeSpawn.run!(IPA_INSTALL_COMMAND,
                           :params => [
                             "-N", :force_join, :fixed_primary, :unattended, {
@@ -69,7 +79,7 @@ module Httpd
         configure_pam
         configure_sssd
         enable_kerberos_dns_lookups
-        generate_configmap("ipa", "external", realm, persistent_files)
+        generate_configmap(auth[:type], auth[:configuration], realm, persistent_files)
       end
 
       def configured?

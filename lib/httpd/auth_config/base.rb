@@ -36,6 +36,11 @@ module Httpd
         @realm = @domain = nil
         @timestamp = Time.now.strftime(TIMESTAMP_FORMAT)
       end
+
+      def auth
+        {
+        }
+      end
     end
   end
 end
