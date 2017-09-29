@@ -64,21 +64,33 @@ module HttpdAuthConfig
         puts "Not running in auth-config container - Skipping #{IPA_INSTALL_COMMAND}"
         return
       end
-      AwesomeSpawn.run!(IPA_INSTALL_COMMAND,
-                        :params => [
-                          "-N", :force_join, :fixed_primary, :unattended, {
-                            :realm=     => realm,
-                            :domain=    => domain,
-                            :server=    => opts[:ipaserver],
-                            :principal= => opts[:principal],
-                            :password=  => opts[:password]
-                          }
-                        ])
-      configure_ipa_http_service
-      configure_pam
-      configure_sssd
-      enable_kerberos_dns_lookups
-      generate_configmap(auth[:type], auth[:configuration], realm, persistent_files)
+      begin
+        update_hostname(opts[:host])
+        AwesomeSpawn.run!(IPA_INSTALL_COMMAND,
+                          :params => [
+                            "-N", :force_join, :fixed_primary, :unattended, {
+                              :realm=     => realm,
+                              :domain=    => domain,
+                              :server=    => opts[:ipaserver],
+                              :principal= => opts[:ipaprincipal],
+                              :password=  => opts[:ipapassword]
+                            }
+                          ])
+        configure_ipa_http_service
+        configure_pam
+        configure_sssd
+        enable_kerberos_dns_lookups
+        generate_configmap(auth[:type], auth[:configuration], realm, persistent_files)
+      rescue AwesomeSpawn::CommandResultError => e
+        puts "AwesomeSpawn Command Failed:"
+        puts "  stdout: #{e.result.output}"
+        puts "  stderr:  #{e.result.error}"
+        return
+      rescue => e
+        puts "Command Failed: #{e}"
+        puts e.backtrace
+        return
+      end
     end
 
     def configured?
@@ -87,7 +99,7 @@ module HttpdAuthConfig
 
     def unconfigure
       return unless configured?
-      AwesomSpawn.run(IPA_INSTALL_COMMAND, :params => [:uninstall, :unattended])
+      AwesomeSpawn.run(IPA_INSTALL_COMMAND, :params => [:uninstall, :unattended])
     end
 
     def realm
@@ -107,7 +119,7 @@ module HttpdAuthConfig
     private
 
     def configure_ipa_http_service
-      AwesomeSpawn.run!("/usr/bin/kinit", :params => [:principal], :stdin_data => opts[:password])
+      AwesomeSpawn.run!("/usr/bin/kinit", :params => [opts[:ipaprincipal]], :stdin_data => opts[:ipapassword])
       service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
       service.register
       AwesomeSpawn.run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipaserver], "-k" => HTTP_KEYTAB, "-p" => service.name})
