@@ -2,12 +2,12 @@ lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 # Declare Gem's Version
-require "httpd/auth_config"
+require "httpd_auth_config/version"
 
 # Declare Dependencies
 Gem::Specification.new do |s|
   s.name          = "httpd-authconfig"
-  s.version       = Httpd::AuthConfig::VERSION
+  s.version       = HttpdAuthConfig::VERSION
   s.authors       = ["ManageIQ Developers"]
   s.homepage      = "https://github.com/abellotti/httpd-auth-config.git"
   s.summary       = "The Httpd AuthConfig"

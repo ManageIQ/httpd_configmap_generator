@@ -8,10 +8,11 @@
 
 Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
 
-require 'trollop'
+require "trollop"
+require "httpd_auth_config"
 
 CMD = File.basename($PROGRAM_NAME)
-VERSION = Httpd::AuthConfig::VERSION.freeze
+VERSION = HttpdAuthConfig::VERSION.freeze
 
 def error_msg(msg)
   $stderr.puts msg
@@ -26,7 +27,7 @@ module AuthConfig
   class Cli
     def run_configure(auth_type, cmd_options)
       begin
-        auth_config = Httpd::AuthConfig.new_config(auth_type)
+        auth_config = HttpdAuthConfig.new_config(auth_type)
       rescue => err
         error_msg(err.to_s)
       end
@@ -58,7 +59,7 @@ end
 if ARGV.empty?
   error_msg "
 Usage: #{CMD} auth_type [--help | options]
-Supported auth_type: #{Httpd::AuthConfig.supported_auth_types.join(', ')}
+Supported auth_type: #{HttpdAuthConfig.supported_auth_types.join(', ')}
 "
 else
   AuthConfig::Cli.new.run_configure(ARGV.shift, ARGV)
