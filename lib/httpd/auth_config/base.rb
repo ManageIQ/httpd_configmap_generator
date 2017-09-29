@@ -1,6 +1,7 @@
 require "pathname"
 require "httpd/auth_config/base/file"
 require "httpd/auth_config/base/config"
+require "httpd/auth_config/base/configmap"
 require "httpd/auth_config/base/network"
 require "httpd/auth_config/base/principal"
 require "httpd/auth_config/base/sssd"
