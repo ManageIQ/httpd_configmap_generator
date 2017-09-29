@@ -34,7 +34,7 @@ module Httpd
       def initialize(opts = {})
         @opts = opts
         @realm = @domain = nil
-        @timestamp = Time.current.strftime(TIMESTAMP_FORMAT)
+        @timestamp = Time.now.strftime(TIMESTAMP_FORMAT)
       end
     end
   end

@@ -19,6 +19,32 @@ module Httpd
         )
       end
 
+      def persistent_files
+        %w(
+          /etc/http.keytab
+          /etc/ipa/ca.crt
+          /etc/ipa/default.conf
+          /etc/ipa/nssdb/cert8.db
+          /etc/ipa/nssdb/key3.db
+          /etc/ipa/nssdb/pwdfile.txt
+          /etc/ipa/nssdb/secmod.db
+          /etc/krb5.conf
+          /etc/krb5.keytab
+          /etc/nsswitch.conf
+          /etc/openldap/ldap.conf
+          /etc/pam.d/fingerprint-auth-ac
+          /etc/pam.d/httpd-auth
+          /etc/pam.d/password-auth-ac
+          /etc/pam.d/postlogin-ac
+          /etc/pam.d/smartcard-auth-ac
+          /etc/pam.d/system-auth-ac
+          /etc/pki/ca-trust/source/ipa.p11-kit
+          /etc/sssd/sssd.conf
+          /etc/sysconfig/authconfig
+          /etc/sysconfig/network
+        )
+      end
+
       def configure(opts)
         @opts = opts
         unconfigure if configured? && opts[:force]
@@ -43,6 +69,7 @@ module Httpd
         configure_pam
         configure_sssd
         enable_kerberos_dns_lookups
+        generate_configmap("ipa", "external", realm, persistent_files)
       end
 
       def configured?
@@ -67,6 +94,8 @@ module Httpd
         @domain ||= super
         @domain
       end
+
+      private
 
       def configure_ipa_http_service
         AwesomeSpawn.run!("/usr/bin/kinit", :params => [:principal], :stdin_data => opts[:password])
