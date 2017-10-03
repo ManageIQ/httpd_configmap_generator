@@ -36,6 +36,18 @@ module HttpdAuthConfig
       @timestamp = Time.now.strftime(TIMESTAMP_FORMAT)
     end
 
+    def err_msg(msg)
+      STDERR.puts(msg)
+    end
+
+    def info_msg(msg)
+      STDOUT.puts(msg)
+    end
+
+    def debug_msg(msg)
+      STDOUT.puts(msg) if opts[:debug]
+    end
+
     def auth
       {
       }
@@ -43,13 +55,19 @@ module HttpdAuthConfig
 
     def required_options
       {
-        :host => { :description => "Application Domain" }
+        :host   => { :description => "Application Domain" },
+        :output => { :description => "Output file",
+                     :short       => "-o" }
       }
     end
 
     def optional_options
       {
-        :force => { :description => "Force configuration if configured already", :default => false }
+        :force => { :description => "Force configuration if configured already",
+                    :default     => false },
+        :debug => { :description => "Enabling debugging",
+                    :short       => "-d",
+                    :default     => false }
       }
     end
   end

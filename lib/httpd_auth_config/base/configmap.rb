@@ -4,11 +4,25 @@ require "yaml"
 module HttpdAuthConfig
   class Base
     def generate_configmap(auth_type, auth_configuration, realm, file_list)
+      info_msg("Generating Auth Config-Map for #{auth_type}")
       config_map = auth_configmap_template(auth_type, auth_configuration, realm)
       file_specs = gen_filespecs(file_list)
       configmap_configuration(config_map, file_specs)
       configmap_file_list(config_map, file_specs)
-      puts config_map.to_yaml
+      config_map
+    end
+
+    def save_configmap(config_map, file_path)
+      if File.exists?(file_path)
+        if opts[:force]
+          info_msg("File #{file_path} exists, forcing a delete")
+          File.delete(file_path)
+        else
+          raise "File #{file_path} already exist"
+        end
+      end
+      info_msg("Saving Auth Config-Map to #{file_path}")
+      File.open(file_path, "w") { |f| f.write(config_map.to_yaml) }
     end
 
     private

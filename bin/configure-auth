@@ -2,8 +2,9 @@
 #
 # Script for configuring container with external authentication
 #
-# Stdout: httpd auth configuration map
-# Stderr: any errors during configuration
+# Stdout: standard processing messages ...
+# Stderr: any errors during configuration ...
+# -o filename: for the generated auth-config map.
 #
 
 Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
@@ -17,10 +18,6 @@ VERSION = HttpdAuthConfig::VERSION.freeze
 def error_msg(msg)
   $stderr.puts msg
   exit 1
-end
-
-def debug_msg(msg)
-  $stderr.puts "DEBUG: #{msg}"
 end
 
 module AuthConfig
@@ -44,14 +41,21 @@ module AuthConfig
         opt :version, "Version of the #{CMD} command",
             :default => "", :short => "-V"
         auth_config.required_options.each do |key, key_options|
-          opt key, key_options[:description], :default => key_options[:default] || "", :required => true
+          opt key, key_options[:description], AuthConfig::Cli.options_for(key_options, true)
         end
         auth_config.optional_options.each do |key, key_options|
-          opt key, key_options[:description], :default => key_options[:default] || ""
+          opt key, key_options[:description], AuthConfig::Cli.options_for(key_options)
         end
       end
 
       auth_config.configure(opts)
+    end
+
+    def self.options_for(key_options, required = false)
+      options = {:default => key_options[:default] || ""}
+      options[:required] = true if required
+      options[:short]    = key_options[:short] if key_options[:short]
+      options
     end
   end
 end

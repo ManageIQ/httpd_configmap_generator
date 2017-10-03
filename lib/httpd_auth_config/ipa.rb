@@ -55,14 +55,12 @@ module HttpdAuthConfig
       @opts = opts
       unconfigure if configured? && opts[:force]
       if configured?
-        puts "#{self.class.name} Already Configured"
-        return
+        raise "#{self.class.name} Already Configured"
       end
       service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
       unless ENV["AUTH_CONFIG_DIRECTORY"]
-        puts "Kerberos Principal: #{service.name}"
-        puts "Not running in auth-config container - Skipping #{IPA_INSTALL_COMMAND}"
-        return
+        debug_msg "Kerberos Principal: #{service.name}"
+        raise "Not running in auth-config container - Skipping #{IPA_INSTALL_COMMAND}"
       end
       begin
         update_hostname(opts[:host])
@@ -80,16 +78,17 @@ module HttpdAuthConfig
         configure_pam
         configure_sssd
         enable_kerberos_dns_lookups
-        generate_configmap(auth[:type], auth[:configuration], realm, persistent_files)
+        config_map = generate_configmap(auth[:type], auth[:configuration], realm, persistent_files)
+        save_configmap(config_map, opts[:output])
       rescue AwesomeSpawn::CommandResultError => e
-        puts "AwesomeSpawn Command Failed:"
-        puts "  stdout: #{e.result.output}"
-        puts "  stderr:  #{e.result.error}"
-        return
+        err_msg e.to_s
+        err_msg "stdout: #{e.result.output}"
+        err_msg "stderr: #{e.result.error}"
+        raise e
       rescue => e
-        puts "Command Failed: #{e}"
-        puts e.backtrace
-        return
+        err_msg e.to_s
+        err_msg e.backtrace
+        raise e
       end
     end
 
@@ -119,9 +118,11 @@ module HttpdAuthConfig
     private
 
     def configure_ipa_http_service
+      info_msg("Configuring IPA HTTP Service")
       AwesomeSpawn.run!("/usr/bin/kinit", :params => [opts[:ipaprincipal]], :stdin_data => opts[:ipapassword])
       service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
       service.register
+      debug_msg("- Fetching #{HTTP_KEYTAB}")
       AwesomeSpawn.run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipaserver], "-k" => HTTP_KEYTAB, "-p" => service.name})
       FileUtils.chown(APACHE_USER, nil, HTTP_KEYTAB)
       FileUtils.chmod(0o600, HTTP_KEYTAB)

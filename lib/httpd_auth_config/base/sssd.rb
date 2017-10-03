@@ -1,17 +1,21 @@
 module HttpdAuthConfig
   class Base
     def configure_sssd
+      info_msg("Configuring SSSD Service")
       config = config_file_read(SSSD_CONFIG)
       configure_sssd_domain(config, domain)
       configure_sssd_service(config)
       configure_sssd_ifp(config)
+      debug_msg("- Creating #{SSSD_CONFIG}")
       config_file_write(config, SSSD_CONFIG, timestamp)
     end
+
+    private
 
     def configure_sssd_domain(config, domain)
       ldap_user_extra_attrs = LDAP_ATTRS.keys.join(", ")
       if config.include?("ldap_user_extra_attrs = ")
-        eattern = "[domain/#{Regexp.escape(domain)}](\n.*)+ldap_user_extra_attrs = (.*)"
+        pattern = "[domain/#{Regexp.escape(domain)}](\n.*)+ldap_user_extra_attrs = (.*)"
         config[/#{pattern}/, 2] = ldap_user_extra_attrs
       else
         pattern = "[domain/#{Regexp.escape(domain)}].*(\n)"
