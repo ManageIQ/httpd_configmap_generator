@@ -70,5 +70,11 @@ module HttpdAuthConfig
                     :default     => false }
       }
     end
+
+    # NOTE: see if this can't be done by Trollop
+    def validate_options(options)
+      output_file = Pathname.new(options[:output]).cleanpath.to_s
+      raise "Output file must live under /tmp" unless output_file.start_with?("/tmp/")
+    end
   end
 end

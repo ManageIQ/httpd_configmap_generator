@@ -52,14 +52,11 @@ module HttpdAuthConfig
     end
 
     def configure(opts)
+      validate_options(opts)
       @opts = opts
       unconfigure if configured? && opts[:force]
-      if configured?
-        raise "#{self.class.name} Already Configured"
-      end
-      service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
+      raise "#{self.class.name} Already Configured" if configured?
       unless ENV["AUTH_CONFIG_DIRECTORY"]
-        debug_msg "Kerberos Principal: #{service.name}"
         raise "Not running in auth-config container - Skipping #{IPA_INSTALL_COMMAND}"
       end
       begin
