@@ -12,6 +12,11 @@ LABEL name="auth-confighttpd" \
 ## For ruby
 ENV REF=master
 
+## Auth Httpd Defaults
+ENV HTTPD_AUTH_TYPE=internal \
+    HTTPD_AUTH_CONFIGURATION=internal \
+    HTTPD_AUTH_KERBEROS_REALMS=undefined
+
 ## For httpd-authconfig
 ENV TERM=xterm \
     AUTH_CONFIG_DIRECTORY=/opt/httpd-authconfig
@@ -25,9 +30,6 @@ RUN mkdir -p ${AUTH_CONFIG_DIRECTORY}                                   && \
       | tar vxz -C ${AUTH_CONFIG_DIRECTORY} --strip 1                   && \
     cd ${AUTH_CONFIG_DIRECTORY}                                         && \
     bundle install
-
-## Copy minimalistic container-environment for bringing up container
-COPY docker-assets/container-environment /etc/container-environment
 
 ## Copy base index.html to redirect to the Github httpd-authconfig repo for README.md
 COPY docker-assets/index.html /var/www/html/index.html
