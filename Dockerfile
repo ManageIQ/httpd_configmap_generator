@@ -29,6 +29,9 @@ RUN mkdir -p ${AUTH_CONFIG_DIRECTORY}                                   && \
 ## Copy minimalistic container-environment for bringing up container
 COPY docker-assets/container-environment /etc/container-environment
 
+## Copy base index.html to redirect to the Github httpd-authconfig repo for README.md
+COPY docker-assets/index.html /var/www/html/index.html
+
 ## Set the working directory of the container
 WORKDIR ${AUTH_CONFIG_DIRECTORY}
 
