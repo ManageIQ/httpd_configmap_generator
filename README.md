@@ -1,33 +1,137 @@
-# container-httpd-auth-config
+# container-httpd-authconfig
 Container for configuring external authentication for ManageIQ.
-It is based on the front-end container-httpd container and generates the httpd auth-config map
+It is based on the auth httpd container and generates the httpd auth-config map
 needed to enable external authentication in ManageIQ.
 
-### Running this docker image and get the running docker's container id
+### Installing
+
 ```
-$ docker run --privileged abellotti/container-httpd-auth-config:latest &
-$ AUTHCONFIG_CONTAINER_ID="`docker ps -l -q`"
+$ git clone https://github.com/abellotti/container-httpd-authconfig.git
 ```
 
-### Configure external authentication against IPA
+### Pre-deployment tasks
+
+#### If running without OCI systemd hooks (Minishift)
+
+The miq-httpd-authconfig service account must be added to the miq-sysadmin SCC before the Httpd Auth Config pod can run.
+
+##### As Admin
+
 ```
-$ docker exec $AUTHCONFIG_CONTAINER_ID /opt/httpd-auth-config/bin/configure-auth ipa ...
+$ oc adm policy add-scc-to-user miq-sysadmin system:serviceaccount:<your-namespace>:miq-httpd-authconfig
 ```
+
+Verify that the miq-httpd-authconfig service account is now included in the miq-sysadmin SCC:
+
+```
+$ oc describe scc miq-sysadmin | grep Users
+Users:        system:serviceaccount:<your-namespace>:miq-httpd-authconfig
+```
+
+#### If running  with OCI systemd hooks
+
+##### As Admin
+
+```
+$ oc adm policy add-scc-to-user anyuid system:serviceaccount:<your-namespace>:miq-httpd-authconfig
+```
+
+Verify that the miq-httpd-authconfig service account is now included in the miq-sysadmin SCC:
+
+```
+$ oc describe scc anyuid | grep Users
+Users:        system:serviceaccount:<your-namespace>:miq-httpd-authconfig
+```
+
+
+### Deploy the Httpd AuthConfig Application
+
+As basic user
+
+```
+$ oc create -f templates/miq-httpd-authconifg-template.yaml
+
+$ oc get templates
+NAME                        DESCRIPTION                                                 PARAMETERS     OBJECTS
+manageiq-httpd-authconfig   ManageIQ appliance httpd authentication configuration       7 (1 blank)    4
+```
+
+Deploy the Httpd AuthConfig
+
+```
+$ oc new-app --template=manageiq-httpd-authconfig
+```
+
+Check the readiness of the httpd AuthConfig
+
+```
+$ oc get pods
+NAME                       READY     STATUS    RESTARTS   AGE
+httpd-authconfig-1-txc34   1/1       Running   0          1h
+```
+
+#### Getting the POD Name
+
+For working with the configure-auth script in the httpd-authconfig pod, it is necessary to get the pod name reference below as <authconfig_pod>.
+
+
+```
+$ authconfig_pod=`oc get pods | grep "httpd-authconfig" | cut -f1 -d" "`
+```
+
+
+### Generating a configmap for external authentication against IPA
+
+```
+$ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth ipa ...
+```
+
+Example configuration:
+
+```
+$ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth ipa \
+    --force                             \
+    --host=miq-appliance.example.com    \   
+    --ipaserver=ipaserver.example.com   \   
+    --ipadomain=example.com             \   
+    --iparealm=EXAMPLE.COM              \   
+    --ipaprincipal=admin                \   
+    --ipapassword=smartvm1              \ 
+    -o /tmp/configmap-external-ipa.yaml
+```
+
+`--host` above must be the DNS of the ManageIQ application, i.e. ${APPLICATION_DOMAIN}
+
+
+Copying the new auth configmap back locally:
+
+```
+$ oc cp <authconfig_pod>:/tmp/configmap-external-ipa.yaml ./configmap-external-ipa.yaml
+```
+
+The new configmap can then be applied on the ManageIQ auth httpd and then redeployed to take effect:
+
+```
+$ oc replace configmaps httpd-auth-configs --filename ./configmap-external-ipa.yaml
+```
+
 
 ### Usage for the configure-auth tool:
+
 ```
-$ docker exec $AUTHCONFIG_CONTAINER_ID /opt/httpd-auth-config/bin/configure-auth --help
+$ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth --help
 ```
 
 Additional information on the configure-auth CLI is available at with the
 httpd-auth-config gem [README.md](https://github.com/abellotti/httpd-auth-config/blob/master/README.md)
 
-### Optionally get to a bash shell in the container
+### Httpd AuthConfig POD access
+
 ```
-$ docker exec -it $AUTHCONFIG_CONTAINER_ID /bin/bash -i
+$ oc rsh <authconfig_pod> /bin/bash -i
 ```
 
-### Stop the httpd authentication configuration container
-```
-$ docker stop $AUTHCONFIG_CONTAINER_ID
-```
+To generate a new auth configuration map it is recommended to redeploy the manageiq-httpd-authconfig pod first to get a clean environment before running the /opt/httpd-authconfig/bin/configure-auth tool.
+
+When done generating an auth-configmap, the manageiq-httpd-authconfig pod can simply be scaled down.
+
