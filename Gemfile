@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Leverage the httpd-auth-config.gemspec
+# Leverage the httpd-authconfig.gemspec
 gemspec
 
 group :test do

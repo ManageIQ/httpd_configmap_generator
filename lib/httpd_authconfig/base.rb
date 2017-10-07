@@ -1,12 +1,12 @@
 require "pathname"
-require "httpd_auth_config/base/file"
-require "httpd_auth_config/base/config"
-require "httpd_auth_config/base/configmap"
-require "httpd_auth_config/base/network"
-require "httpd_auth_config/base/principal"
-require "httpd_auth_config/base/sssd"
-require "httpd_auth_config/base/pam"
-require "httpd_auth_config/base/kerberos"
+require "httpd_authconfig/base/file"
+require "httpd_authconfig/base/config"
+require "httpd_authconfig/base/configmap"
+require "httpd_authconfig/base/network"
+require "httpd_authconfig/base/principal"
+require "httpd_authconfig/base/sssd"
+require "httpd_authconfig/base/pam"
+require "httpd_authconfig/base/kerberos"
 
 module HttpdAuthConfig
   class Base

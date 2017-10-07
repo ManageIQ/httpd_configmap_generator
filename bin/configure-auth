@@ -10,7 +10,7 @@
 Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
 
 require "trollop"
-require "httpd_auth_config"
+require "httpd_authconfig"
 
 CMD = File.basename($PROGRAM_NAME)
 VERSION = HttpdAuthConfig::VERSION.freeze
