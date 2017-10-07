@@ -123,7 +123,7 @@ $ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth --help
 ```
 
 Additional information on the configure-auth CLI is available at with the
-httpd-auth-config gem [README.md](https://github.com/abellotti/httpd-auth-config/blob/master/README.md)
+httpd-authconfig gem [README.md](https://github.com/abellotti/httpd-authconfig/blob/master/README.md)
 
 ### Httpd AuthConfig POD access
 
