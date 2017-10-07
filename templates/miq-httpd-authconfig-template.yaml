@@ -51,7 +51,7 @@ objects:
         timeoutSeconds: 1200
     triggers:
     - type: ConfigChange
-    replicas: 1
+    replicas: 0
     selector:
       name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
     template:

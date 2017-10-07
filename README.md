@@ -62,6 +62,12 @@ Deploy the Httpd AuthConfig
 $ oc new-app --template=manageiq-httpd-authconfig
 ```
 
+Scale up the Httpd AuthConfig
+
+```
+$ oc scale dc httpd-authconfig --replicas=1
+```
+
 Check the readiness of the httpd AuthConfig
 
 ```
@@ -133,5 +139,9 @@ $ oc rsh <authconfig_pod> /bin/bash -i
 
 To generate a new auth configuration map it is recommended to redeploy the manageiq-httpd-authconfig pod first to get a clean environment before running the /opt/httpd-authconfig/bin/configure-auth tool.
 
-When done generating an auth-configmap, the manageiq-httpd-authconfig pod can simply be scaled down.
+When done generating an auth-configmap, the manageiq-httpd-authconfig pod can simply be scaled down:
+
+```
+$ oc scale dc httpd-authconfig --replicas=0
+```
 
