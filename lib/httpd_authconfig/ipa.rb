@@ -49,35 +49,26 @@ module HttpdAuthConfig
     end
 
     def configure(opts)
-      validate_options(opts)
-      @opts = opts
-      unconfigure if configured? && opts[:force]
-      raise "#{self.class.name} Already Configured" if configured?
-      unless ENV["AUTH_CONFIG_DIRECTORY"]
-        raise "Not running in auth-config container - Skipping #{IPA_INSTALL_COMMAND}"
-      end
-      begin
-        update_hostname(opts[:host])
-        command_run!(IPA_INSTALL_COMMAND,
-                     :params => [
-                       "-N", :force_join, :fixed_primary, :unattended, {
-                         :realm=     => realm,
-                         :domain=    => domain,
-                         :server=    => opts[:ipaserver],
-                         :principal= => opts[:ipaprincipal],
-                         :password=  => opts[:ipapassword]
-                       }
-                     ])
-        configure_ipa_http_service
-        configure_pam
-        configure_sssd
-        enable_kerberos_dns_lookups
-        config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
-        save_configmap(config_map, opts[:output])
-      rescue => err
-        log_command_error(err)
-        raise err
-      end
+      update_hostname(opts[:host])
+      command_run!(IPA_INSTALL_COMMAND,
+                   :params => [
+                     "-N", :force_join, :fixed_primary, :unattended, {
+                       :realm=     => realm,
+                       :domain=    => domain,
+                       :server=    => opts[:ipaserver],
+                       :principal= => opts[:ipaprincipal],
+                       :password=  => opts[:ipapassword]
+                     }
+                   ])
+      configure_ipa_http_service
+      configure_pam
+      configure_sssd
+      enable_kerberos_dns_lookups
+      config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
+      save_configmap(config_map, opts[:output])
+    rescue => err
+      log_command_error(err)
+      raise err
     end
 
     def configured?

@@ -67,6 +67,17 @@ module HttpdAuthConfig
       }
     end
 
+    def run_configure(opts)
+      validate_options(opts)
+      @opts = opts
+      unconfigure if configured? && opts[:force]
+      raise "#{self.class.name} Already Configured" if configured?
+      unless ENV["AUTH_CONFIG_DIRECTORY"]
+        raise "Not running in auth-config container - Skipping #{self.class.name} configuration"
+      end
+      configure(opts)
+    end
+
     # NOTE: see if this can't be done by Trollop
     def validate_options(options)
       output_file = Pathname.new(options[:output]).cleanpath.to_s

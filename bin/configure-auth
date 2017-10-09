@@ -22,7 +22,7 @@ end
 
 module AuthConfig
   class Cli
-    def run_configure(auth_type, cmd_options)
+    def run_configure(auth_type)
       begin
         auth_config = HttpdAuthConfig.new_config(auth_type)
       rescue => err
@@ -30,7 +30,7 @@ module AuthConfig
       end
 
       opts = Trollop.options do
-        version "#{CMD} #{VERSION} - Httpd External Auth Configuration script"
+        version("#{CMD} #{VERSION} - Httpd External Auth Configuration script")
         banner <<-EOS
       #{version}
 
@@ -48,7 +48,7 @@ module AuthConfig
         end
       end
 
-      auth_config.configure(opts)
+      auth_config.run_configure(opts)
     end
 
     def self.options_for(key_options, required = false)
@@ -61,10 +61,10 @@ module AuthConfig
 end
 
 if ARGV.empty?
-  error_msg "
+  error_msg("
 Usage: #{CMD} auth_type [--help | options]
 Supported auth_type: #{HttpdAuthConfig.supported_auth_types.join(', ')}
-"
+")
 else
-  AuthConfig::Cli.new.run_configure(ARGV.shift, ARGV)
+  AuthConfig::Cli.new.run_configure(ARGV.shift)
 end

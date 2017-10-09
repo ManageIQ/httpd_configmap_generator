@@ -29,30 +29,21 @@ module HttpdAuthConfig
     end
 
     def configure(opts)
-      validate_options(opts)
-      @opts = opts
-      unconfigure if configured? && opts[:force]
-      raise "#{self.class.name} Already Configured" if configured?
-      unless ENV["AUTH_CONFIG_DIRECTORY"]
-        raise "Not running in auth-config container - Skipping #{MELLON_CREATE_METADATA_COMMAND}"
+      update_hostname(opts[:host])
+      Dir.mkdir(SAML2_CONFIG_DIRECTORY)
+      Dir.chdir(SAML2_CONFIG_DIRECTORY) do
+        command_run!(MELLON_CREATE_METADATA_COMMAND,
+                    :params => [
+                      "https://#{opts[:host]}",
+                      "https://#{opts[:host]}/saml2"
+                    ])
+        rename_mellon_configfiles
       end
-      begin
-        update_hostname(opts[:host])
-        Dir.mkdir(SAML2_CONFIG_DIRECTORY)
-        Dir.chdir(SAML2_CONFIG_DIRECTORY) do
-          command_run!(MELLON_CREATE_METADATA_COMMAND,
-                      :params => [
-                        "https://#{opts[:host]}",
-                        "https://#{opts[:host]}/saml2"
-                      ])
-          rename_mellon_configfiles
-        end
-        config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
-        save_configmap(config_map, opts[:output])
-      rescue => err
-        log_command_error(err)
-        raise err
-      end
+      config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
+      save_configmap(config_map, opts[:output])
+    rescue => err
+      log_command_error(err)
+      raise err
     end
 
     def configured?
