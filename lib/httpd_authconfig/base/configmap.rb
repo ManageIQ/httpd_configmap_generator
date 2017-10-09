@@ -13,7 +13,7 @@ module HttpdAuthConfig
     end
 
     def save_configmap(config_map, file_path)
-      if File.exists?(file_path)
+      if File.exist?(file_path)
         if opts[:force]
           info_msg("File #{file_path} exists, forcing a delete")
           File.delete(file_path)
@@ -23,6 +23,10 @@ module HttpdAuthConfig
       end
       info_msg("Saving Auth Config-Map to #{file_path}")
       File.open(file_path, "w") { |f| f.write(config_map.to_yaml) }
+    end
+
+    def read_configmap(file_path)
+      File.exist?(file_path) ? YAML.load_file(file_path) : {}
     end
 
     private

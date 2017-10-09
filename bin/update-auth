@@ -1,0 +1,70 @@
+#! /usr/bin/env ruby
+#
+# Script for updating configuration maps for external authentication
+#
+# Stdout: standard processing messages ...
+# Stderr: any errors during configuration ...
+# -i filename: for the auth-config map to update.
+# -o filename: for the updated auth-config map.
+#
+
+Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
+
+require "trollop"
+require "httpd_authconfig"
+
+CMD = File.basename($PROGRAM_NAME)
+VERSION = HttpdAuthConfig::VERSION.freeze
+
+def error_msg(msg)
+  $stderr.puts msg
+  exit 1
+end
+
+module AuthUpdate
+  class Cli
+    def run_update
+      begin
+        auth_config = HttpdAuthConfig::Update.new
+      rescue => err
+        error_msg(err.to_s)
+      end
+
+      opts = Trollop.options do
+        version("#{CMD} #{VERSION} - Httpd External Auth Update script")
+        banner <<-EOS
+      #{version}
+
+      Usage: #{CMD} [options]
+
+      #{CMD} options are:
+      EOS
+        opt :version, "Version of the #{CMD} command",
+            :default => "", :short => "-V"
+        auth_config.required_options.each do |key, key_options|
+          opt key, key_options[:description], AuthUpdate::Cli.options_for(key_options, true)
+        end
+        auth_config.optional_options.each do |key, key_options|
+          opt key, key_options[:description], AuthUpdate::Cli.options_for(key_options)
+        end
+      end
+
+      auth_config.run_configure(opts)
+    end
+
+    def self.options_for(key_options, required = false)
+      options = {:default => key_options[:default] || ""}
+      options[:required] = true if required
+      options[:short]    = key_options[:short] if key_options[:short]
+      options
+    end
+  end
+end
+
+if ARGV.empty?
+  error_msg("
+Usage: #{CMD} [--help | options]
+")
+else
+  AuthUpdate::Cli.new.run_update
+end
