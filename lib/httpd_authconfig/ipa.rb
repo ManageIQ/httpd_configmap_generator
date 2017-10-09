@@ -58,31 +58,25 @@ module HttpdAuthConfig
       end
       begin
         update_hostname(opts[:host])
-        AwesomeSpawn.run!(IPA_INSTALL_COMMAND,
-                          :params => [
-                            "-N", :force_join, :fixed_primary, :unattended, {
-                              :realm=     => realm,
-                              :domain=    => domain,
-                              :server=    => opts[:ipaserver],
-                              :principal= => opts[:ipaprincipal],
-                              :password=  => opts[:ipapassword]
-                            }
-                          ])
+        command_run!(IPA_INSTALL_COMMAND,
+                     :params => [
+                       "-N", :force_join, :fixed_primary, :unattended, {
+                         :realm=     => realm,
+                         :domain=    => domain,
+                         :server=    => opts[:ipaserver],
+                         :principal= => opts[:ipaprincipal],
+                         :password=  => opts[:ipapassword]
+                       }
+                     ])
         configure_ipa_http_service
         configure_pam
         configure_sssd
         enable_kerberos_dns_lookups
         config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
         save_configmap(config_map, opts[:output])
-      rescue AwesomeSpawn::CommandResultError => e
-        err_msg e.to_s
-        err_msg "stdout: #{e.result.output}"
-        err_msg "stderr: #{e.result.error}"
-        raise e
-      rescue => e
-        err_msg e.to_s
-        err_msg e.backtrace
-        raise e
+      rescue => err
+        log_command_error(err)
+        raise err
       end
     end
 
@@ -92,7 +86,7 @@ module HttpdAuthConfig
 
     def unconfigure
       return unless configured?
-      AwesomeSpawn.run(IPA_INSTALL_COMMAND, :params => [:uninstall, :unattended])
+      command_run(IPA_INSTALL_COMMAND, :params => [:uninstall, :unattended])
     end
 
     def realm
@@ -113,11 +107,11 @@ module HttpdAuthConfig
 
     def configure_ipa_http_service
       info_msg("Configuring IPA HTTP Service")
-      AwesomeSpawn.run!("/usr/bin/kinit", :params => [opts[:ipaprincipal]], :stdin_data => opts[:ipapassword])
+      command_run!("/usr/bin/kinit", :params => [opts[:ipaprincipal]], :stdin_data => opts[:ipapassword])
       service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
       service.register
       debug_msg("- Fetching #{HTTP_KEYTAB}")
-      AwesomeSpawn.run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipaserver], "-k" => HTTP_KEYTAB, "-p" => service.name})
+      command_run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipaserver], "-k" => HTTP_KEYTAB, "-p" => service.name})
       FileUtils.chown(APACHE_USER, nil, HTTP_KEYTAB)
       FileUtils.chmod(0o600, HTTP_KEYTAB)
     end

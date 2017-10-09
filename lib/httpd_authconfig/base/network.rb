@@ -20,9 +20,7 @@ module HttpdAuthConfig
     end
 
     def update_hostname(host)
-      if AwesomeSpawn.run(HOSTNAME_COMMAND).output.strip != host
-        AwesomeSpawn.run!(HOSTNAME_COMMAND, :params => [host])
-      end
+      command_run!(HOSTNAME_COMMAND, :params => [host]) if command_run(HOSTNAME_COMMAND).output.strip != host
     end
   end
 end
