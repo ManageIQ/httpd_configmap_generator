@@ -2,13 +2,10 @@ module HttpdAuthConfig
   class Ipa < Base
     IPA_INSTALL_COMMAND  = "/usr/sbin/ipa-client-install".freeze
     IPA_GETKEYTAB        = "/usr/sbin/ipa-getkeytab".freeze
-
-    def auth
-      {
-        :type          => "ipa",
-        :configuration => "external"
-      }
-    end
+    AUTH = {
+      :type          => "ipa",
+      :configuration => "external"
+    }.freeze
 
     def required_options
       super.merge(
@@ -75,7 +72,7 @@ module HttpdAuthConfig
         configure_pam
         configure_sssd
         enable_kerberos_dns_lookups
-        config_map = generate_configmap(auth[:type], auth[:configuration], realm, persistent_files)
+        config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
         save_configmap(config_map, opts[:output])
       rescue AwesomeSpawn::CommandResultError => e
         err_msg e.to_s

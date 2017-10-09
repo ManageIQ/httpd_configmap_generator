@@ -48,11 +48,6 @@ module HttpdAuthConfig
       STDOUT.puts(msg) if opts[:debug]
     end
 
-    def auth
-      {
-      }
-    end
-
     def required_options
       {
         :host   => { :description => "Application Domain" },
