@@ -14,17 +14,6 @@ objects:
   metadata:
     name: miq-httpd-authconfig
 - apiVersion: v1
-  kind: Route
-  metadata:
-    name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
-  spec:
-    host: "${APPLICATION_DOMAIN}"
-    port:
-      targetPort: http-authconfig
-    to:
-      kind: Service
-      name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
-- apiVersion: v1
   kind: Service
   metadata:
     name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
@@ -94,10 +83,6 @@ objects:
         serviceAccount: miq-httpd-authconfig
         serviceAccountName: miq-httpd-authconfig
 parameters:
-- name: APPLICATION_DOMAIN
-  displayName: Httpd Auth Config Hostname
-  description: The exposed hostname that will route to the httpd-authconfig page, if left blank a value will be defaulted.
-  value: ''
 - name: HTTPD_AUTHCONFIG_SERVICE_NAME
   required: true
   displayName: Apache httpd Auth Config Service Name
