@@ -1,6 +1,7 @@
 require "httpd_authconfig/version"
 require "httpd_authconfig/base"
 require "httpd_authconfig/ipa"
+require "httpd_authconfig/saml"
 
 module HttpdAuthConfig
   def self.new_config(auth_type)
