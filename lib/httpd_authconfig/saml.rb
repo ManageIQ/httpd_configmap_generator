@@ -33,10 +33,10 @@ module HttpdAuthConfig
       Dir.mkdir(SAML2_CONFIG_DIRECTORY)
       Dir.chdir(SAML2_CONFIG_DIRECTORY) do
         command_run!(MELLON_CREATE_METADATA_COMMAND,
-                    :params => [
-                      "https://#{opts[:host]}",
-                      "https://#{opts[:host]}/saml2"
-                    ])
+                     :params => [
+                       "https://#{opts[:host]}",
+                       "https://#{opts[:host]}/saml2"
+                     ])
         rename_mellon_configfiles
       end
       config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
@@ -52,7 +52,7 @@ module HttpdAuthConfig
 
     def unconfigure
       return unless configured?
-      File.rm_rf(SAML2_CONFIG_DIRECTORY) if Dir.exist?(SAML2_CONFIG_DIRECTORY)
+      FileUtils.rm_rf(SAML2_CONFIG_DIRECTORY) if Dir.exist?(SAML2_CONFIG_DIRECTORY)
     end
 
     private
