@@ -125,7 +125,7 @@ $ oc replace configmaps httpd-auth-configs --filename ./configmap-external-ipa.y
 ### Usage for the configure-auth tool:
 
 ```
-$ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth --help
+$ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth
 ```
 
 Additional information on the configure-auth CLI is available at with the
