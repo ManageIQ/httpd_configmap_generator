@@ -14,7 +14,6 @@ ENV REF=master
 
 ## Auth Httpd Defaults
 ENV HTTPD_AUTH_TYPE=internal \
-    HTTPD_AUTH_CONFIGURATION=internal \
     HTTPD_AUTH_KERBEROS_REALMS=undefined
 
 ## For httpd-authconfig

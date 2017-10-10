@@ -103,7 +103,7 @@ $ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth ipa \
     --iparealm=EXAMPLE.COM              \   
     --ipaprincipal=admin                \   
     --ipapassword=smartvm1              \ 
-    -o /tmp/configmap-external-ipa.yaml
+    -o /tmp/external-ipa.yaml
 ```
 
 `--host` above must be the DNS of the ManageIQ application, i.e. ${APPLICATION_DOMAIN}
@@ -112,13 +112,13 @@ $ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth ipa \
 Copying the new auth configmap back locally:
 
 ```
-$ oc cp <authconfig_pod>:/tmp/configmap-external-ipa.yaml ./configmap-external-ipa.yaml
+$ oc cp <authconfig_pod>:/tmp/external-ipa.yaml ./external-ipa.yaml
 ```
 
 The new configmap can then be applied on the ManageIQ auth httpd and then redeployed to take effect:
 
 ```
-$ oc replace configmaps httpd-auth-configs --filename ./configmap-external-ipa.yaml
+$ oc replace configmaps httpd-auth-configs --filename ./external-ipa.yaml
 ```
 
 
