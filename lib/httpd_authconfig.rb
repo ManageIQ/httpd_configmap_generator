@@ -3,6 +3,7 @@ require "httpd_authconfig/base"
 require "httpd_authconfig/ipa"
 require "httpd_authconfig/saml"
 require "httpd_authconfig/update"
+require "more_core_extensions/core_ext/hash"
 
 module HttpdAuthConfig
   def self.new_config(auth_type)

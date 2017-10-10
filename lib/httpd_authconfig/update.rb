@@ -2,8 +2,10 @@ module HttpdAuthConfig
   class Update < Base
     def required_options
       {
-        :input => { :description => "Input file",
-                    :short       => "-i" }
+        :input  => { :description => "Input config map file",
+                     :short       => "-i" },
+        :output => { :description => "Output config map file",
+                     :short       => "-o" }
       }
     end
 
@@ -16,12 +18,9 @@ module HttpdAuthConfig
 
     def update(opts)
       validate_options(opts)
+      @opts = opts
       config_map = read_configmap(opts[:input])
-      if opts[:addfile]
-        opts[:addfile].each do |addfile|
-          info_msg("Adding file #{addfile}")
-        end
-      end
+      configmap_addfiles(config_map, opts[:addfile]) if opts[:addfile].present?
       save_configmap(config_map, opts[:output])
     rescue => err
       log_command_error(err)
@@ -32,6 +31,7 @@ module HttpdAuthConfig
 
     def validate_options(options)
       raise "Input configuration map #{options[:input]} does not exist" unless File.exist?(options[:input])
+      raise "Must specify at least one file to add via --addfile" if options[:addfile].nil?
     end
   end
 end

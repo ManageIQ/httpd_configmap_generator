@@ -27,8 +27,6 @@ module HttpdAuthConfig
     TIMESTAMP_FORMAT     = "%Y%m%d_%H%M%S".freeze
 
     attr_accessor :opts
-    attr_accessor :realm
-    attr_accessor :domain
     attr_accessor :timestamp
 
     def initialize(opts = {})
