@@ -3,8 +3,8 @@ module HttpdAuthConfig
     IPA_INSTALL_COMMAND  = "/usr/sbin/ipa-client-install".freeze
     IPA_GETKEYTAB        = "/usr/sbin/ipa-getkeytab".freeze
     AUTH = {
-      :type          => "ipa",
-      :configuration => "external"
+      :type    => "external",
+      :subtype => "ipa"
     }.freeze
 
     def required_options
@@ -64,7 +64,7 @@ module HttpdAuthConfig
       configure_pam
       configure_sssd
       enable_kerberos_dns_lookups
-      config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
+      config_map = generate_configmap(AUTH[:type], realm, persistent_files)
       save_configmap(config_map, opts[:output])
     rescue => err
       log_command_error(err)

@@ -12,7 +12,7 @@ module HttpdAuthConfig
   def self.supported_auth_types
     constants.collect do |c|
       k = const_get(c)
-      k::AUTH[:type] if k.kind_of?(Class) && k.constants.include?(:AUTH)
+      k::AUTH[:subtype] if k.kind_of?(Class) && k.constants.include?(:AUTH)
     end.compact
   end
 

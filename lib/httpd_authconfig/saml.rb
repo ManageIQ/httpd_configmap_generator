@@ -4,8 +4,8 @@ module HttpdAuthConfig
     SAML2_CONFIG_DIRECTORY = "/etc/httpd/saml2".freeze
     MIQSP_METADATA_FILE = "#{SAML2_CONFIG_DIRECTORY}/miqsp-metadata.xml".freeze
     AUTH = {
-      :type          => "saml",
-      :configuration => "saml"
+      :type    => "saml",
+      :subtype => "saml"
     }.freeze
 
     def required_options
@@ -39,7 +39,7 @@ module HttpdAuthConfig
                      ])
         rename_mellon_configfiles
       end
-      config_map = generate_configmap(AUTH[:type], AUTH[:configuration], realm, persistent_files)
+      config_map = generate_configmap(AUTH[:type], realm, persistent_files)
       save_configmap(config_map, opts[:output])
     rescue => err
       log_command_error(err)
