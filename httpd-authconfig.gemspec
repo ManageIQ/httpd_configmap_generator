@@ -8,7 +8,7 @@ require "httpd_authconfig/version"
 Gem::Specification.new do |s|
   s.name          = "httpd-authconfig"
   s.version       = HttpdAuthConfig::VERSION
-  s.authors       = ["ManageIQ Developers"]
+  s.authors       = ["Httpd Auth Config Developers"]
   s.homepage      = "https://github.com/abellotti/httpd-authconfig.git"
   s.summary       = "The Httpd AuthConfig"
   s.description   = "The Httpd AuthConfig"
