@@ -30,6 +30,17 @@ module HttpdAuthConfig
       config_map
     end
 
+    def configmap_exportfile(config_map, file_entry, output_file)
+      basename, _target_file, _mode = configmap_search_file_entry(config_map, file_entry)
+      raise "File #{file_entry} does not exist in the configuration map" unless basename
+      delete_target_file(output_file)
+      create_target_directory(output_file)
+      debug_msg("Exporting #{file_entry} to #{output_file} ...")
+      content = config_map.fetch_path("data", basename)
+      content = Base64.decode64(content) if basename =~ /^.*\.base64$/
+      File.write(output_file, content)
+    end
+
     private
 
     def auth_configmap_template(auth_type, kerberos_realms)
@@ -123,6 +134,14 @@ module HttpdAuthConfig
       auth_configuration = auth_configuration.join("\n") + "\n"
       # now, append any of the new file_specs at the end of the list.
       append_configmap_configuration(config_map, auth_configuration, file_specs)
+    end
+
+    def configmap_search_file_entry(config_map, target_file)
+      auth_configuration = config_map.fetch_path("data", "auth-configuration.conf")
+      return nil unless auth_configuration
+      auth_configuration = auth_configuration.split("\n")
+      entry = auth_configuration.select { |line| line =~ /^file = .* #{target_file} .*$/ }
+      entry ? entry.first.split('=')[1].strip.split(' ') : nil
     end
 
     def configmap_configuration(config_map, file_specs)

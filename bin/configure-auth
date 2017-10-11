@@ -28,7 +28,7 @@ module AuthConfig
         banner <<-EOS
       #{version}
 
-      Usage: #{CMD} auth_type | update [--help | options]
+      Usage: #{CMD} auth_type | update | export [--help | options]
 
       #{CMD} options are:
       EOS
@@ -64,6 +64,16 @@ module AuthConfig
       auth_config.update(parse_arguments(auth_config))
     end
 
+    def run_export
+      begin
+        auth_config = HttpdAuthConfig::Export.new
+      rescue => err
+        error_msg(err.to_s)
+      end
+
+      auth_config.export(parse_arguments(auth_config))
+    end
+
     def self.options_for(key_options, required = false)
       options = {:default => key_options[:default] || ""}
       options[:required] = true if required
@@ -76,7 +86,7 @@ end
 
 if ARGV.empty?
   error_msg("
-Usage: #{CMD} auth_type | update [--help | options]
+Usage: #{CMD} auth_type | update | export [--help | options]
 Supported auth_type: #{HttpdAuthConfig.supported_auth_types.join(', ')}
 ")
 else
@@ -84,6 +94,8 @@ else
   case auth_type
   when "update"
     AuthConfig::Cli.new.run_update
+  when "export"
+    AuthConfig::Cli.new.run_export
   else
     AuthConfig::Cli.new.run_configure(auth_type)
   end
