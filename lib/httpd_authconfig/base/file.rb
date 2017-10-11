@@ -14,8 +14,26 @@ module HttpdAuthConfig
       if src_path.to_s.include?(".erb")
         File.write(dest_path, ERB.new(File.read(src_path), nil, '-').result(binding))
       else
-        FileUtils.cp src_path, dest_path
+        FileUtils.cp(src_path, dest_path)
       end
+    end
+
+    def delete_target_file(file_path)
+      if File.exist?(file_path)
+        if opts[:force]
+          info_msg("File #{file_path} exists, forcing a delete")
+          File.delete(file_path)
+        else
+          raise "File #{file_path} already exist"
+        end
+      end
+    end
+
+    def create_target_directory(file_path)
+      dirname = File.dirname(file_path)
+      return if File.exist?(dirname)
+      debug_msg("Creating directory #{dirname} ...")
+      FileUtils.mkdir_p(dirname)
     end
 
     def rm_file(file, dir = "/")
