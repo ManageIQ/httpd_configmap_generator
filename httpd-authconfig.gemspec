@@ -14,8 +14,7 @@ Gem::Specification.new do |s|
   s.description   = "The Httpd AuthConfig"
   s.licenses      = ["Apache-2.0"]
 
-  s.files         = `git ls-files -- lib/*`.split("\n")
-  s.files        += %w(LICENSE.txt README.md)
+  s.files         = Dir["{lib}/**,*", "LICENSE.txt", "README.md"]
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rspec",    "~> 3.0"
