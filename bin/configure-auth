@@ -22,19 +22,13 @@ end
 
 module AuthConfig
   class Cli
-    def run_configure(auth_type)
-      begin
-        auth_config = HttpdAuthConfig.new_config(auth_type)
-      rescue => err
-        error_msg(err.to_s)
-      end
-
+    def parse_arguments(auth_config)
       opts = Trollop.options do
-        version("#{CMD} #{VERSION} - Httpd External Auth Configuration script")
+        version("#{CMD} #{VERSION} - External Authentication Configuration script")
         banner <<-EOS
       #{version}
 
-      Usage: #{CMD} auth_type [options]
+      Usage: #{CMD} auth_type | update [--help | options]
 
       #{CMD} options are:
       EOS
@@ -47,14 +41,34 @@ module AuthConfig
           opt key, key_options[:description], AuthConfig::Cli.options_for(key_options)
         end
       end
+      opts
+    end
 
-      auth_config.run_configure(opts)
+    def run_configure(auth_type)
+      begin
+        auth_config = HttpdAuthConfig.new_config(auth_type)
+      rescue => err
+        error_msg(err.to_s)
+      end
+
+      auth_config.run_configure(parse_arguments(auth_config))
+    end
+
+    def run_update
+      begin
+        auth_config = HttpdAuthConfig::Update.new
+      rescue => err
+        error_msg(err.to_s)
+      end
+
+      auth_config.update(parse_arguments(auth_config))
     end
 
     def self.options_for(key_options, required = false)
       options = {:default => key_options[:default] || ""}
       options[:required] = true if required
       options[:short]    = key_options[:short] if key_options[:short]
+      options[:multi]    = key_options[:multi] if key_options[:multi]
       options
     end
   end
@@ -62,9 +76,15 @@ end
 
 if ARGV.empty?
   error_msg("
-Usage: #{CMD} auth_type [--help | options]
+Usage: #{CMD} auth_type | update [--help | options]
 Supported auth_type: #{HttpdAuthConfig.supported_auth_types.join(', ')}
 ")
 else
-  AuthConfig::Cli.new.run_configure(ARGV.shift)
+  auth_type = ARGV.shift
+  case auth_type
+  when "update"
+    AuthConfig::Cli.new.run_update
+  else
+    AuthConfig::Cli.new.run_configure(auth_type)
+  end
 end
