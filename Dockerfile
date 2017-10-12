@@ -20,12 +20,9 @@ ENV HTTPD_AUTH_TYPE=internal \
 ENV TERM=xterm \
     AUTH_CONFIG_DIRECTORY=/opt/httpd-authconfig
 
-## Need git
-RUN yum install -y git
-
 ## Fetch and build the httpd-authconfig gem
 RUN mkdir -p ${AUTH_CONFIG_DIRECTORY}                                   && \
-    curl -L https://github.com/abellotti/httpd-authconfig/tarball/${REF}  \
+    curl -L https://github.com/abellotti/httpd-authconfig/tarball/${REF}   \
       | tar vxz -C ${AUTH_CONFIG_DIRECTORY} --strip 1                   && \
     cd ${AUTH_CONFIG_DIRECTORY}                                         && \
     bundle install

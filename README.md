@@ -1,7 +1,7 @@
 # container-httpd-authconfig
-Container for configuring external authentication for ManageIQ.
+Container for configuring external authentication for the httpd auth pod.
 It is based on the auth httpd container and generates the httpd auth-config map
-needed to enable external authentication in ManageIQ.
+needed to enable external authentication.
 
 ### Installing
 
@@ -49,7 +49,7 @@ Users:        system:serviceaccount:<your-namespace>:miq-httpd-authconfig
 As basic user
 
 ```
-$ oc create -f templates/miq-httpd-authconifg-template.yaml
+$ oc create -f templates/miq-httpd-authconfig-template.yaml
 
 $ oc get templates
 NAME                        DESCRIPTION                                                 PARAMETERS     OBJECTS
@@ -97,16 +97,16 @@ Example configuration:
 ```
 $ oc rsh <authconfig_pod> /opt/httpd-authconfig/bin/configure-auth ipa \
     --force                             \
-    --host=miq-appliance.example.com    \   
-    --ipaserver=ipaserver.example.com   \   
-    --ipadomain=example.com             \   
-    --iparealm=EXAMPLE.COM              \   
-    --ipaprincipal=admin                \   
-    --ipapassword=smartvm1              \ 
+    --host=miq-appliance.example.com    \
+    --ipa-server=ipaserver.example.com  \
+    --ipa-domain=example.com            \
+    --ipa-realm=EXAMPLE.COM             \
+    --ipa-principal=admin               \
+    --ipa-password=smartvm1             \
     -o /tmp/external-ipa.yaml
 ```
 
-`--host` above must be the DNS of the ManageIQ application, i.e. ${APPLICATION_DOMAIN}
+`--host` above must be the DNS of the application exposing the httpd auth pod, i.e. ${APPLICATION_DOMAIN}
 
 
 Copying the new auth configmap back locally:
@@ -115,7 +115,7 @@ Copying the new auth configmap back locally:
 $ oc cp <authconfig_pod>:/tmp/external-ipa.yaml ./external-ipa.yaml
 ```
 
-The new configmap can then be applied on the ManageIQ auth httpd and then redeployed to take effect:
+The new configmap can then be applied to the auth httpd pod and then redeployed to take effect:
 
 ```
 $ oc replace configmaps httpd-auth-configs --filename ./external-ipa.yaml
