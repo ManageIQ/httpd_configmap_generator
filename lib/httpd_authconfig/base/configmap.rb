@@ -78,8 +78,6 @@ module HttpdAuthConfig
     #   /path/of/source/file,/path/of/real/file,mode
     #   http://url_source,/path/of/real/file,mode
     def gen_filespecs_for_files_to_add(file_list)
-      require "net/http"
-
       file_specs = []
       file_list.each do |file_to_add|
         file_spec = file_to_add.split(",").map(&:strip)
@@ -94,12 +92,7 @@ module HttpdAuthConfig
         when 3
           source_file, target_file, mode = file_spec
           if source_file =~ URI.regexp(%w(http https))
-            delete_target_file(target_file)
-            create_target_directory(target_file)
-            debug_msg("Downloading #{source_file} ...")
-            result = Net::HTTP.get_response(URI(source_file))
-            raise "Failed to fet URL file source #{source_file}" unless result.kind_of?(Net::HTTPSuccess)
-            File.write(target_file, result.body)
+            fetch_network_file(source_file, target_file)
             file_entry = file_entry_spec(target_file, target_file, mode)
           else
             file_entry = file_entry_spec(source_file, target_file, mode)

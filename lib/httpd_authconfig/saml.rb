@@ -2,7 +2,8 @@ module HttpdAuthConfig
   class Saml < Base
     MELLON_CREATE_METADATA_COMMAND = "/usr/libexec/mod_auth_mellon/mellon_create_metadata.sh".freeze
     SAML2_CONFIG_DIRECTORY = "/etc/httpd/saml2".freeze
-    MIQSP_METADATA_FILE = "#{SAML2_CONFIG_DIRECTORY}/miqsp-metadata.xml".freeze
+    MIQSP_METADATA_FILE    = "#{SAML2_CONFIG_DIRECTORY}/miqsp-metadata.xml".freeze
+    IDP_METADATA_FILE      = "#{SAML2_CONFIG_DIRECTORY}/idp-metadata.xml".freeze
     AUTH = {
       :type    => "saml",
       :subtype => "saml"
@@ -14,17 +15,21 @@ module HttpdAuthConfig
 
     def optional_options
       super.merge(
-        :keycloak_server => { :description => "Keycloak Server Fqdn or IP" },
-        :keycloak_realm  => { :description => "Keycloak Realm for this client"}
+        :keycloak_add_metadata => { :description => "Download and add the Keycloak metadata file",
+                                    :default     => false },
+        :keycloak_server       => { :description => "Keycloak Server Fqdn or IP" },
+        :keycloak_realm        => { :description => "Keycloak Realm for this client"}
       )
     end
 
     def persistent_files
-      %w(
+      file_list = %w(
         /etc/httpd/saml2/miqsp-key.key
         /etc/httpd/saml2/miqsp-cert.cert
         /etc/httpd/saml2/miqsp-metadata.xml
       )
+      file_list += [IDP_METADATA_FILE] if opts[:keycloak_add_metadata]
+      file_list
     end
 
     def configure(opts)
@@ -37,6 +42,7 @@ module HttpdAuthConfig
                        "https://#{opts[:host]}/saml2"
                      ])
         rename_mellon_configfiles
+        fetch_idp_metadata
       end
       config_map = generate_configmap(AUTH[:type], realm, persistent_files)
       save_configmap(config_map, opts[:output])
@@ -58,6 +64,11 @@ module HttpdAuthConfig
 
     def validate_options(options)
       super(options)
+      if options[:keycloak_add_metadata]
+        if options[:keycloak_server] == "" || options[:keycloak_realm] == ""
+          raise "Must specify both keycloak-server and keycloak-realm for fetching the IdP metadata file"
+        end
+      end
     end
 
     def rename_mellon_configfiles
@@ -82,6 +93,11 @@ module HttpdAuthConfig
     end
 
     def fetch_idp_metadata
+      if opts[:keycloak_add_metadata]
+        source_file  = "http://#{opts[:keycloak_server]}:8080"
+        source_file += "/auth/realms/#{opts[:keycloak_realm]}/protocol/saml/descriptor"
+        fetch_network_file(source_file, IDP_METADATA_FILE)
+      end
     end
   end
 end
