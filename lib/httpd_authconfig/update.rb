@@ -11,8 +11,9 @@ module HttpdAuthConfig
 
     def optional_options
       super.merge(
-        :addfile => { :description => "Add file to config map",
-                      :multi       => true }
+        :add_file => { :description => "Add file to config map",
+                       :short       => "-a",
+                       :multi       => true }
       )
     end
 
@@ -20,7 +21,7 @@ module HttpdAuthConfig
       validate_options(opts)
       @opts = opts
       config_map = read_configmap(opts[:input])
-      configmap_addfiles(config_map, opts[:addfile]) if opts[:addfile].present?
+      configmap_addfiles(config_map, opts[:add_file]) if opts[:add_file].present?
       save_configmap(config_map, opts[:output])
     rescue => err
       log_command_error(err)
@@ -31,7 +32,7 @@ module HttpdAuthConfig
 
     def validate_options(options)
       raise "Input configuration map #{options[:input]} does not exist" unless File.exist?(options[:input])
-      raise "Must specify at least one file to add via --addfile" if options[:addfile].nil?
+      raise "Must specify at least one file to add via --add-file" if options[:add_file].nil?
     end
   end
 end

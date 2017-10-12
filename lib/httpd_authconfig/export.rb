@@ -5,7 +5,7 @@ module HttpdAuthConfig
         :input  => { :description => "Input config map file",
                      :short       => "-i" },
         :file   => { :description => "Config map file to export",
-                     :short       => "-f" },
+                     :short       => "-l" },
         :output => { :description => "The output file being exported",
                      :short       => "-o" }
       }

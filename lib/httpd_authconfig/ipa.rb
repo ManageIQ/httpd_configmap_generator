@@ -9,16 +9,16 @@ module HttpdAuthConfig
 
     def required_options
       super.merge(
-        :ipaserver   => { :description => "IPA Server Fqdn"     },
-        :ipapassword => { :description => "IPA Server Password" }
+        :ipa_server   => { :description => "IPA Server Fqdn"     },
+        :ipa_password => { :description => "IPA Server Password" }
       )
     end
 
     def optional_options
       super.merge(
-        :ipaprincipal => { :description => "IPA Server Principal", :default => "admin" },
-        :ipadomain    => { :description => "Domain of IPA Server" },
-        :iparealm     => { :description => "Realm of IPA Server"  }
+        :ipa_principal => { :description => "IPA Server Principal", :default => "admin" },
+        :ipa_domain    => { :description => "Domain of IPA Server" },
+        :ipa_realm     => { :description => "Realm of IPA Server" }
       )
     end
 
@@ -55,9 +55,9 @@ module HttpdAuthConfig
                      "-N", :force_join, :fixed_primary, :unattended, {
                        :realm=     => realm,
                        :domain=    => domain,
-                       :server=    => opts[:ipaserver],
-                       :principal= => opts[:ipaprincipal],
-                       :password=  => opts[:ipapassword]
+                       :server=    => opts[:ipa_server],
+                       :principal= => opts[:ipa_principal],
+                       :password=  => opts[:ipa_password]
                      }
                    ])
       configure_ipa_http_service
@@ -81,15 +81,15 @@ module HttpdAuthConfig
     end
 
     def realm
-      @realm ||= opts[:iparealm] if opts[:iparealm].present?
+      @realm ||= opts[:ipa_realm] if opts[:ipa_realm].present?
       @realm ||= domain
       @realm ||= super
       @realm = @realm.upcase
     end
 
     def domain
-      @domain ||= opts[:ipadomain] if opts[:ipadomain].present?
-      @domain ||= domain_from_host(opts[:ipaserver]) if opts[:ipaserver].present?
+      @domain ||= opts[:ipa_domain] if opts[:ipa_domain].present?
+      @domain ||= domain_from_host(opts[:ipa_server]) if opts[:ipa_server].present?
       @domain ||= super
       @domain
     end
@@ -98,11 +98,11 @@ module HttpdAuthConfig
 
     def configure_ipa_http_service
       info_msg("Configuring IPA HTTP Service")
-      command_run!("/usr/bin/kinit", :params => [opts[:ipaprincipal]], :stdin_data => opts[:ipapassword])
+      command_run!("/usr/bin/kinit", :params => [opts[:ipa_principal]], :stdin_data => opts[:ipa_password])
       service = Principal.new(:hostname => opts[:host], :realm => realm, :service => "HTTP")
       service.register
       debug_msg("- Fetching #{HTTP_KEYTAB}")
-      command_run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipaserver], "-k" => HTTP_KEYTAB, "-p" => service.name})
+      command_run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipa_server], "-k" => HTTP_KEYTAB, "-p" => service.name})
       FileUtils.chown(APACHE_USER, nil, HTTP_KEYTAB)
       FileUtils.chmod(0o600, HTTP_KEYTAB)
     end

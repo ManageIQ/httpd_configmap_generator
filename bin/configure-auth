@@ -33,7 +33,7 @@ module AuthConfig
       #{CMD} options are:
       EOS
         opt :version, "Version of the #{CMD} command",
-            :default => "", :short => "-V"
+            :default => false, :short => "-V"
         auth_config.required_options.each do |key, key_options|
           opt key, key_options[:description], AuthConfig::Cli.options_for(key_options, true)
         end
@@ -75,7 +75,8 @@ module AuthConfig
     end
 
     def self.options_for(key_options, required = false)
-      options = {:default => key_options[:default] || ""}
+      options = {}
+      options[:default] = key_options.key?(:default) ? key_options[:default] : ""
       options[:required] = true if required
       options[:short]    = key_options[:short] if key_options[:short]
       options[:multi]    = key_options[:multi] if key_options[:multi]

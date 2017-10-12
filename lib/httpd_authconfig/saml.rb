@@ -14,9 +14,8 @@ module HttpdAuthConfig
 
     def optional_options
       super.merge(
-        :idpserver      => { :description => "SAML Server Fqdn or IP" },
-        :idpmetadataurl => { :description => "URL to use for fetching the idp-metadata" },
-        :keycloakrealm  => { :description => "Keycloak Realm to use for fetching the idp-metadata"}
+        :keycloak_server => { :description => "Keycloak Server Fqdn or IP" },
+        :keycloak_realm  => { :description => "Keycloak Realm for this client"}
       )
     end
 

@@ -49,8 +49,9 @@ module HttpdAuthConfig
 
     def required_options
       {
-        :host   => { :description => "Application Domain" },
-        :output => { :description => "Output file",
+        :host   => { :description => "Application Domain",
+                     :short       => "-h" },
+        :output => { :description => "Configuration map file to create",
                      :short       => "-o" }
       }
     end
@@ -58,8 +59,9 @@ module HttpdAuthConfig
     def optional_options
       {
         :force => { :description => "Force configuration if configured already",
+                    :short       => "-f",
                     :default     => false },
-        :debug => { :description => "Enabling debugging",
+        :debug => { :description => "Enable debugging",
                     :short       => "-d",
                     :default     => false }
       }
