@@ -1,6 +1,7 @@
 require "base64"
 require "yaml"
 require "uri"
+require "etc"
 
 module HttpdAuthConfig
   class ConfigMap < Base
@@ -69,15 +70,7 @@ module HttpdAuthConfig
     def gen_filespecs(file_list)
       file_specs = []
       file_list.each do |file|
-        file = file.strip
-        stat = File.stat(file)
-        file_entry = {
-          :basename => File.basename(file).dup,
-          :binary   => file_binary?(file),
-          :target   => file,
-          :mode     => "%4o:%s:%s" % [stat.mode & 0o7777, stat.uid, stat.gid]
-        }
-        file_specs << file_entry
+        file_specs << file_entry_spec(file.strip)
       end
       file_specs.sort_by { |file_spec| file_spec[:basename] }
     end
@@ -94,7 +87,7 @@ module HttpdAuthConfig
         case file_spec.length
         when 1
           file = file_spec.first
-          file_entry = file_entry_spec(file, file)
+          file_entry = file_entry_spec(file)
         when 2
           source_file, target_file = file_spec
           raise "Must specify a mode for URL file sources" if source_file =~ URI.regexp(%w(http https))
@@ -115,13 +108,18 @@ module HttpdAuthConfig
       file_specs.sort_by { |file_spec| file_spec[:basename] }
     end
 
-    def file_entry_spec(source_file, target_file, mode = nil)
-      stat = File.stat(source_file) unless mode
+    def file_entry_spec(source_file, target_file = nil, mode = nil)
+      target_file = source_file.dup unless target_file
+      unless mode
+        stat = File.stat(source_file)
+        file_owner = Etc.getpwuid(stat.uid).name
+        file_group = Etc.getgrgid(stat.gid).name
+      end
       {
         :basename => File.basename(target_file).dup,
         :binary   => file_binary?(source_file),
         :target   => target_file,
-        :mode     => mode ? mode : "%4o:%s:%s" % [stat.mode & 0o7777, stat.uid, stat.gid]
+        :mode     => mode ? mode : "%4o:%s:%s" % [stat.mode & 0o7777, file_owner, file_group]
       }
     end
 
