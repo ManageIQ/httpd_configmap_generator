@@ -20,9 +20,10 @@ module HttpdAuthConfig
     def update(opts)
       validate_options(opts)
       @opts = opts
-      config_map = read_configmap(opts[:input])
-      configmap_addfiles(config_map, opts[:add_file]) if opts[:add_file].present?
-      save_configmap(config_map, opts[:output])
+      config_map = ConfigMap.new(opts)
+      config_map.load(opts[:input])
+      config_map.add_files(opts[:add_file])
+      config_map.save(opts[:output])
     rescue => err
       log_command_error(err)
       raise err

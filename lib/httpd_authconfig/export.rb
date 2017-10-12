@@ -14,8 +14,9 @@ module HttpdAuthConfig
     def export(opts)
       validate_options(opts)
       @opts = opts
-      config_map = read_configmap(opts[:input])
-      configmap_exportfile(config_map, opts[:file], opts[:output])
+      config_map = ConfigMap.new(opts)
+      config_map.load(opts[:input])
+      config_map.export_file(opts[:file], opts[:output])
     rescue => err
       log_command_error(err)
       raise err

@@ -3,54 +3,64 @@ require "yaml"
 require "uri"
 
 module HttpdAuthConfig
-  class Base
-    def generate_configmap(auth_type, realm, file_list)
-      info_msg("Generating Auth Config-Map for #{auth_type}")
-      config_map = auth_configmap_template(auth_type, realm)
-      file_specs = gen_filespecs(file_list)
-      configmap_configuration(config_map, file_specs)
-      configmap_file_list(config_map, file_specs)
-      config_map
+  class ConfigMap < Base
+    DATA_SECTION = "data".freeze
+    AUTH_CONFIGURATION = "auth-configuration.conf".freeze
+
+    attr_accessor :config_map
+    attr_accessor :opts
+
+    def initialize(opts = {})
+      @opts = opts
+      @config_map = template
     end
 
-    def save_configmap(config_map, file_path)
+    def generate(auth_type, realm, file_list)
+      info_msg("Generating Auth Config-Map for #{auth_type}")
+      @config_map = template(auth_type, realm)
+      file_specs = gen_filespecs(file_list)
+      define_configuration(file_specs)
+      include_files(file_specs)
+    end
+
+    def load(file_path)
+      @config_map = File.exist?(file_path) ? YAML.load_file(file_path) : {}
+    end
+
+    def save(file_path)
       delete_target_file(file_path)
       info_msg("Saving Auth Config-Map to #{file_path}")
       File.open(file_path, "w") { |f| f.write(config_map.to_yaml) }
     end
 
-    def read_configmap(file_path)
-      File.exist?(file_path) ? YAML.load_file(file_path) : {}
-    end
-
-    def configmap_addfiles(config_map, file_list)
+    def add_files(file_list)
+      return unless file_list
       file_specs = gen_filespecs_for_files_to_add(file_list)
-      configmap_update_configuration(config_map, file_specs)
-      configmap_file_list(config_map, file_specs)
-      config_map
+      update_configuration(file_specs)
+      include_files(file_specs)
     end
 
-    def configmap_exportfile(config_map, file_entry, output_file)
-      basename, _target_file, _mode = configmap_search_file_entry(config_map, file_entry)
+    def export_file(file_entry, output_file)
+      basename, _target_file, _mode = search_file_entry(file_entry)
       raise "File #{file_entry} does not exist in the configuration map" unless basename
       delete_target_file(output_file)
       create_target_directory(output_file)
       debug_msg("Exporting #{file_entry} to #{output_file} ...")
-      content = config_map.fetch_path("data", basename)
+      content = config_map.fetch_path(DATA_SECTION, basename)
       content = Base64.decode64(content) if basename =~ /^.*\.base64$/
       File.write(output_file, content)
     end
 
     private
 
-    def auth_configmap_template(auth_type, kerberos_realms)
+    def template(auth_type = "internal", kerberos_realms = "undefined")
       {
-        "data"     => {
+        DATA_SECTION => {
           "auth-type"            => auth_type,
           "auth-kerberos-realms" => kerberos_realms
         },
-        "kind"     => "ConfigMap",
-        "metadata" => {
+        "kind"       => "ConfigMap",
+        "metadata"   => {
           "name" => "httpd-auth-configs"
         }
       }
@@ -115,53 +125,61 @@ module HttpdAuthConfig
       }
     end
 
-    def configmap_update_configuration(config_map, file_specs)
-      auth_configuration = config_map.fetch_path("data", "auth-configuration.conf")
-      return configmap_configuration(config_map, file_specs) unless auth_configuration
+    def update_configuration(file_specs)
+      auth_configuration = fetch_auth_configuration
+      return define_configuration(file_specs) unless auth_configuration
       # first, remove any file_specs references in the file list, we don't want duplication here.
       auth_configuration = auth_configuration.split("\n")
       file_specs.each do |file_spec|
-        entry = auth_configuration.select { |line| line =~ /^file = .* #{file_spec[:target]} .*$/ }
+        entry = auth_configuration.select { |line| line =~ file_entry_regex(file_spec[:target]) }
         auth_configuration -= entry if entry
       end
       auth_configuration = auth_configuration.join("\n") + "\n"
       # now, append any of the new file_specs at the end of the list.
-      append_configmap_configuration(config_map, auth_configuration, file_specs)
+      append_configuration(auth_configuration, file_specs)
     end
 
-    def configmap_search_file_entry(config_map, target_file)
-      auth_configuration = config_map.fetch_path("data", "auth-configuration.conf")
+    def search_file_entry(target_file)
+      auth_configuration = fetch_auth_configuration
       return nil unless auth_configuration
       auth_configuration = auth_configuration.split("\n")
-      entry = auth_configuration.select { |line| line =~ /^file = .* #{target_file} .*$/ }
+      entry = auth_configuration.select { |line| line =~ file_entry_regex(target_file) }
       entry ? entry.first.split('=')[1].strip.split(' ') : nil
     end
 
-    def configmap_configuration(config_map, file_specs)
+    def define_configuration(file_specs)
       auth_configuration = "# External Authentication Configuration File\n#\n"
-      append_configmap_configuration(config_map, auth_configuration, file_specs)
+      append_configuration(auth_configuration, file_specs)
     end
 
-    def configmap_file_list(config_map, file_specs)
+    def include_files(file_specs)
       file_specs.each do |file_spec|
         content = File.read(file_spec[:target])
         content = Base64.encode64(content) if file_spec[:binary]
         # encode(:universal_newline => true) will convert \r\n to \n, necessary for to_yaml to render properly.
-        config_map["data"].merge!(configmap_basename(file_spec) => content.encode(:universal_newline => true))
+        config_map[DATA_SECTION].merge!(file_basename(file_spec) => content.encode(:universal_newline => true))
       end
     end
 
-    def configmap_basename(file_spec)
+    def file_basename(file_spec)
       file_spec[:binary] ? "#{file_spec[:basename]}.base64" : file_spec[:basename]
     end
 
-    def append_configmap_configuration(config_map, auth_configuration, file_specs)
+    def append_configuration(auth_configuration, file_specs)
       file_specs.each do |file_spec|
         debug_msg("Adding file #{file_spec[:target]} ...")
-        auth_configuration += "file = #{configmap_basename(file_spec)} #{file_spec[:target]} #{file_spec[:mode]}\n"
+        auth_configuration += "file = #{file_basename(file_spec)} #{file_spec[:target]} #{file_spec[:mode]}\n"
       end
-      config_map["data"] ||= {}
-      config_map["data"].merge!("auth-configuration.conf" => auth_configuration)
+      config_map[DATA_SECTION] ||= {}
+      config_map[DATA_SECTION].merge!(AUTH_CONFIGURATION => auth_configuration)
+    end
+
+    def fetch_auth_configuration
+      config_map.fetch_path(DATA_SECTION, AUTH_CONFIGURATION)
+    end
+
+    def file_entry_regex(target_file)
+      /^file = .* #{target_file} .*$/
     end
   end
 end

@@ -64,8 +64,9 @@ module HttpdAuthConfig
       configure_pam
       configure_sssd
       enable_kerberos_dns_lookups
-      config_map = generate_configmap(AUTH[:type], realm, persistent_files)
-      save_configmap(config_map, opts[:output])
+      config_map = ConfigMap.new(opts)
+      config_map.generate(AUTH[:type], realm, persistent_files)
+      config_map.save(opts[:output])
     rescue => err
       log_command_error(err)
       raise err

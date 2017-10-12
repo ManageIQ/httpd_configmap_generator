@@ -44,8 +44,9 @@ module HttpdAuthConfig
         rename_mellon_configfiles
         fetch_idp_metadata
       end
-      config_map = generate_configmap(AUTH[:type], realm, persistent_files)
-      save_configmap(config_map, opts[:output])
+      config_map = ConfigMap.new(opts)
+      config_map.generate(AUTH[:type], realm, persistent_files)
+      config_map.save(opts[:output])
     rescue => err
       log_command_error(err)
       raise err
