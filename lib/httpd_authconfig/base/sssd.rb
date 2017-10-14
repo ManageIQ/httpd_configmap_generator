@@ -5,6 +5,7 @@ module HttpdAuthConfig
       config = config_file_read(SSSD_CONFIG)
       configure_sssd_domain(config, domain)
       configure_sssd_service(config)
+      configure_sssd_pam(config)
       configure_sssd_ifp(config)
       debug_msg("- Creating #{SSSD_CONFIG}")
       config_file_write(config, SSSD_CONFIG, timestamp)
@@ -30,6 +31,11 @@ module HttpdAuthConfig
       services = config.match(/\[sssd\](\n.*)+services = (.*)/)[2]
       services = "#{services}, ifp" unless services.include?("ifp")
       config[/\[sssd\](\n.*)+services = (.*)/, 2] = services
+    end
+
+    def configure_sssd_pam(config)
+      return if config.include?("[pam]")
+      config << "\n[pam]\n"
     end
 
     def configure_sssd_ifp(config)

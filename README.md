@@ -25,7 +25,7 @@ Generating an auth-config map can be done by running the configure-auth tool
 $ /opt/httpd-authconfig/bin/configure-auth
 
 Usage: configure-auth auth_type | update | export [--help | options]
-Supported auth_type: ipa, saml
+Supported auth_type: active-directory, ipa, saml
 ```
 
 Showing the usage for each authentication type or sub-command as follows:
@@ -36,10 +36,11 @@ $ /opt/httpd-authconfig/bin/configure-auth ipa --help
 
 ## Supported Authentication Types
 
-|auth-type| Identity Provider/Environment | for usage: |
-|---------|-------------------------------|------------|
-| ipa     | IPA, IPA 2-factor authentication, IPA/AD Trust |[README-ipa](README-ipa.md) |
-| saml    | Keycloak, etc. | [README-saml](README-saml.md) |
+|auth-type         | Identity Provider/Environment                  | for usage: |
+|------------------|------------------------------------------------|------------|
+| active-directory | Active Directory domain realm join             | [README-active-directory](README-active-directory.md) |
+| ipa              | IPA, IPA 2-factor authentication, IPA/AD Trust | [README-ipa](README-ipa.md) |
+| saml             | Keycloak, etc.                                 | [README-saml](README-saml.md) |
 
 ___
 

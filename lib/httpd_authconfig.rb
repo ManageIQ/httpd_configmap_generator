@@ -1,5 +1,6 @@
 require "httpd_authconfig/version"
 require "httpd_authconfig/base"
+require "httpd_authconfig/active_directory"
 require "httpd_authconfig/ipa"
 require "httpd_authconfig/saml"
 require "httpd_authconfig/update"
@@ -21,7 +22,7 @@ module HttpdAuthConfig
   def self.auth_class(auth_type)
     require "active_support/core_ext/string" # for camelize
 
-    auth_type = auth_type.camelize
+    auth_type = auth_type.tr('-', '_').camelize
     raise "Invalid Authentication Type #{auth_type} specified" unless const_defined?(auth_type, false)
     const_get(auth_type, false)
   end
