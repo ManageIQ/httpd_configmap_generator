@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: manageiq-httpd-authconfig
+metadata:
+  name: manageiq-httpd-authconfig
+  annotations:
+    description: ManageIQ appliance httpd authentication configuration CLI
+    tags: instant-app,manageiq,miq,httpd
+    iconClass: icon-rails
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: miq-httpd-authconfig
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
+    annotations:
+      description: Exposes the httpd authconfig server
+      service.alpha.openshift.io/dependencies: '[{"name":"${NAME}","namespace":"","kind":"Service"}]'
+  spec:
+    ports:
+    - name: http-authconfig
+      port: 80
+      targetPort: 80
+    selector:
+      name: httpd-authconfig
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
+    annotations:
+      description: Defines how to deploy httpd
+  spec:
+    strategy:
+      type: Recreate
+      recreateParams:
+        timeoutSeconds: 1200
+    triggers:
+    - type: ConfigChange
+    replicas: 0
+    selector:
+      name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
+    template:
+      metadata:
+        name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
+        labels:
+          name: "${HTTPD_AUTHCONFIG_SERVICE_NAME}"
+      spec:
+        containers:
+        - name: httpd-authconfig
+          image: "${HTTPD_AUTHCONFIG_IMG_NAME}:${HTTPD_AUTHCONFIG_IMG_TAG}"
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+              - pidof
+              - httpd
+            initialDelaySeconds: 15
+            timeoutSeconds: 3
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+#          resources:
+#            requests:
+#              memory: "${HTTPD_AUTHCONFIG_MEM_REQ}"
+#              cpu: "${HTTPD_AUTHCONFIG_CPU_REQ}"
+#            limits:
+#              memory: "${HTTPD_AUTHCONFIG_MEM_LIMIT}"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - "/usr/bin/save-container-environment"
+        serviceAccount: miq-httpd-authconfig
+        serviceAccountName: miq-httpd-authconfig
+parameters:
+- name: HTTPD_AUTHCONFIG_SERVICE_NAME
+  required: true
+  displayName: Apache httpd Auth Config Service Name
+  description: The name of the OpenShift Service exposed for the httpd container.
+  value: httpd-authconfig
+- name: HTTPD_AUTHCONFIG_IMG_NAME
+  displayName: Apache httpd authconfig Image Name
+  description: This is the httpd authconfig image name requested to deploy.
+  value: docker.io/abellotti/httpd-authconfig
+- name: HTTPD_AUTHCONFIG_IMG_TAG
+  displayName: Apache httpd authconfig Image Tag
+  description: This is the httpd authconfig image tag/version requested to deploy.
+  value: latest
+- name: HTTPD_AUTHCONFIG_CPU_REQ
+  displayName: Apache httpd authconfig Min CPU Requested
+  required: true
+  description: Minimum amount of CPU time the httpd authconfig container will need (expressed in millicores).
+  value: 500m
+- name: HTTPD_AUTHCONFIG_MEM_REQ
+  displayName: Apache httpd authconfig Min RAM Requested
+  required: true
+  description: Minimum amount of memory the httpd authconfig container will need.
+  value: 512Mi
+- name: HTTPD_AUTHCONFIG_MEM_LIMIT
+  displayName: Apache httpd authconfig Max RAM Limit
+  required: true
+  description: Maximum amount of memory the httpd authconfig container can consume.
+  value: 8192Mi
