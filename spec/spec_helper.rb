@@ -4,4 +4,4 @@ if ENV["CI"]
 end
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require "httpd_authconfig"
+require "httpd_configmap_generator"
