@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.name          = "httpd_configmap_generator"
   s.version       = HttpdConfigmapGenerator::VERSION
   s.authors       = ["Httpd Auth Config Developers"]
-  s.homepage      = "https://github.com/abellotti/httpd_configmap_generator"
+  s.homepage      = "https://github.com/ManageIQ/httpd_configmap_generator"
   s.summary       = "The Httpd Configmap Generator"
   s.description   = "The Httpd Configmap Generator"
   s.licenses      = ["Apache-2.0"]

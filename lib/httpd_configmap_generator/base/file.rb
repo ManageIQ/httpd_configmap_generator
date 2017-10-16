@@ -4,7 +4,7 @@ module HttpdConfigmapGenerator
   class Base
     def template_directory
       @template_directory ||= begin
-        Pathname.new(Bundler.locked_gems.specs.select { |g| g.name == "httpd-authconfig" }.first.gem_dir).join("templates")
+        Pathname.new(Bundler.locked_gems.specs.select { |g| g.name == "httpd_configmap_generator" }.first.gem_dir).join("templates")
       end
     end
 
