@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Update < Base
     def required_options
       {

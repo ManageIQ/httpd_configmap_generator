@@ -1,6 +1,6 @@
 require "awesome_spawn"
 
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Principal < Base
     attr_accessor :hostname
     attr_accessor :realm        # EXAMPLE.COM

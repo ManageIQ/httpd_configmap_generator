@@ -1,13 +1,13 @@
-require "httpd_authconfig/version"
-require "httpd_authconfig/base"
-require "httpd_authconfig/active_directory"
-require "httpd_authconfig/ipa"
-require "httpd_authconfig/saml"
-require "httpd_authconfig/update"
-require "httpd_authconfig/export"
+require "httpd_configmap_generator/version"
+require "httpd_configmap_generator/base"
+require "httpd_configmap_generator/active_directory"
+require "httpd_configmap_generator/ipa"
+require "httpd_configmap_generator/saml"
+require "httpd_configmap_generator/update"
+require "httpd_configmap_generator/export"
 require "more_core_extensions/core_ext/hash"
 
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   def self.new_config(auth_type)
     auth_class(auth_type).new
   end

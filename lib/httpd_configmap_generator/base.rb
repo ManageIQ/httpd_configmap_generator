@@ -1,15 +1,15 @@
 require "pathname"
-require "httpd_authconfig/base/command"
-require "httpd_authconfig/base/config"
-require "httpd_authconfig/base/configmap"
-require "httpd_authconfig/base/file"
-require "httpd_authconfig/base/kerberos"
-require "httpd_authconfig/base/network"
-require "httpd_authconfig/base/pam"
-require "httpd_authconfig/base/principal"
-require "httpd_authconfig/base/sssd"
+require "httpd_configmap_generator/base/command"
+require "httpd_configmap_generator/base/config"
+require "httpd_configmap_generator/base/config_map"
+require "httpd_configmap_generator/base/file"
+require "httpd_configmap_generator/base/kerberos"
+require "httpd_configmap_generator/base/network"
+require "httpd_configmap_generator/base/pam"
+require "httpd_configmap_generator/base/principal"
+require "httpd_configmap_generator/base/sssd"
 
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     APACHE_USER          = "apache".freeze
     HTTP_KEYTAB          = "/etc/http.keytab".freeze

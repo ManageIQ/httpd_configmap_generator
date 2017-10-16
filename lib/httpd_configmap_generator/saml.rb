@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Saml < Base
     MELLON_CREATE_METADATA_COMMAND = "/usr/libexec/mod_auth_mellon/mellon_create_metadata.sh".freeze
     SAML2_CONFIG_DIRECTORY = "/etc/httpd/saml2".freeze

@@ -1,6 +1,6 @@
 require "pathname"
 
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     def template_directory
       @template_directory ||= begin

@@ -2,16 +2,16 @@ lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 # Declare Gem's Version
-require "httpd_authconfig/version"
+require "httpd_configmap_generator/version"
 
 # Declare Dependencies
 Gem::Specification.new do |s|
-  s.name          = "httpd-authconfig"
-  s.version       = HttpdAuthConfig::VERSION
+  s.name          = "httpd_configmap_generator"
+  s.version       = HttpdConfigmapGenerator::VERSION
   s.authors       = ["Httpd Auth Config Developers"]
-  s.homepage      = "https://github.com/abellotti/httpd-authconfig.git"
-  s.summary       = "The Httpd AuthConfig"
-  s.description   = "The Httpd AuthConfig"
+  s.homepage      = "https://github.com/abellotti/httpd_configmap_generator"
+  s.summary       = "The Httpd Configmap Generator"
+  s.description   = "The Httpd Configmap Generator"
   s.licenses      = ["Apache-2.0"]
 
   s.files         = Dir["{lib}/**,*", "LICENSE.txt", "README.md"]

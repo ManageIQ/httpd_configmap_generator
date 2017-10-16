@@ -3,7 +3,7 @@ require "yaml"
 require "uri"
 require "etc"
 
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class ConfigMap < Base
     DATA_SECTION = "data".freeze
     AUTH_CONFIGURATION = "auth-configuration.conf".freeze

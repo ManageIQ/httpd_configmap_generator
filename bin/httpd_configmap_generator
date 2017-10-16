@@ -10,21 +10,20 @@
 Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
 
 require "trollop"
-require "httpd_authconfig"
+require "httpd_configmap_generator"
 
 CMD = File.basename($PROGRAM_NAME)
-VERSION = HttpdAuthConfig::VERSION.freeze
 
 def error_msg(msg)
   $stderr.puts msg
   exit 1
 end
 
-module AuthConfig
+module HttpdConfigmapGenerator
   class Cli
     def parse_arguments(auth_config)
       opts = Trollop.options do
-        version("#{CMD} #{VERSION} - External Authentication Configuration script")
+        version("#{CMD} #{HttpdConfigmapGenerator::VERSION} - External Authentication Configuration script")
         banner <<-EOS
       #{version}
 
@@ -35,10 +34,10 @@ module AuthConfig
         opt :version, "Version of the #{CMD} command",
             :default => false, :short => "-V"
         auth_config.required_options.each do |key, key_options|
-          opt key, key_options[:description], AuthConfig::Cli.options_for(key_options, true)
+          opt key, key_options[:description], HttpdConfigmapGenerator::Cli.options_for(key_options, true)
         end
         auth_config.optional_options.each do |key, key_options|
-          opt key, key_options[:description], AuthConfig::Cli.options_for(key_options)
+          opt key, key_options[:description], HttpdConfigmapGenerator::Cli.options_for(key_options)
         end
       end
       opts
@@ -46,7 +45,7 @@ module AuthConfig
 
     def run_configure(auth_type)
       begin
-        auth_config = HttpdAuthConfig.new_config(auth_type)
+        auth_config = HttpdConfigmapGenerator.new_config(auth_type)
       rescue => err
         error_msg(err.to_s)
       end
@@ -56,7 +55,7 @@ module AuthConfig
 
     def run_update
       begin
-        auth_config = HttpdAuthConfig::Update.new
+        auth_config = HttpdConfigmapGenerator::Update.new
       rescue => err
         error_msg(err.to_s)
       end
@@ -66,7 +65,7 @@ module AuthConfig
 
     def run_export
       begin
-        auth_config = HttpdAuthConfig::Export.new
+        auth_config = HttpdConfigmapGenerator::Export.new
       rescue => err
         error_msg(err.to_s)
       end
@@ -88,16 +87,16 @@ end
 if ARGV.empty?
   error_msg("
 Usage: #{CMD} auth_type | update | export [--help | options]
-Supported auth_type: #{HttpdAuthConfig.supported_auth_types.join(', ')}
+Supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.join(', ')}
 ")
 else
   auth_type = ARGV.shift
   case auth_type
   when "update"
-    AuthConfig::Cli.new.run_update
+    HttpdConfigmapGenerator::Cli.new.run_update
   when "export"
-    AuthConfig::Cli.new.run_export
+    HttpdConfigmapGenerator::Cli.new.run_export
   else
-    AuthConfig::Cli.new.run_configure(auth_type)
+    HttpdConfigmapGenerator::Cli.new.run_configure(auth_type)
   end
 end

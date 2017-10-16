@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Ipa < Base
     IPA_INSTALL_COMMAND  = "/usr/sbin/ipa-client-install".freeze
     IPA_GETKEYTAB        = "/usr/sbin/ipa-getkeytab".freeze

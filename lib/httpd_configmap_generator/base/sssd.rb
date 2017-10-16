@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     def configure_sssd
       info_msg("Configuring SSSD Service")

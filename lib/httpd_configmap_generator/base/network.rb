@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     HOSTNAME_COMMAND = "/usr/bin/hostname".freeze
 

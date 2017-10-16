@@ -1,6 +1,6 @@
 require "awesome_spawn"
 
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     def command_run(executable, options = {})
       if opts && opts[:debug]

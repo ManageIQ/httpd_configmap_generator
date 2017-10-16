@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     def enable_kerberos_dns_lookups
       info_msg("Configuring Kerberos DNS Lookups")

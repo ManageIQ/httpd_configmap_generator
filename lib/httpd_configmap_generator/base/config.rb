@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     def config_file_read(path)
       File.read(path)

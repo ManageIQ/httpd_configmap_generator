@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   def self.required_options
     {
       :host => { :description => "Application Domain" }

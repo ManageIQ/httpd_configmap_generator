@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class Base
     def configure_pam
       info_msg("Configuring PAM")

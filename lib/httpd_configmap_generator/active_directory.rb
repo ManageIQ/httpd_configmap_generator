@@ -1,4 +1,4 @@
-module HttpdAuthConfig
+module HttpdConfigmapGenerator
   class ActiveDirectory < Base
     REALM_COMMAND        = "/usr/sbin/realm".freeze
     KERBEROS_KEYTAB_FILE = "/etc/krb5.keytab".freeze
