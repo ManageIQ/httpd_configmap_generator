@@ -1,5 +1,14 @@
 # Httpd Configmap Generator
 
+[![Gem Version](https://badge.fury.io/rb/httpd_configmap_generator.svg)](http://badge.fury.io/rb/httpd_configmap_generator)
+[![Build Status](https://travis-ci.org/ManageIQ/httpd_configmap_generator.svg)](https://travis-ci.org/ManageIQ/httpd_configmap_generator)
+[![Code Climate](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator.svg)](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator)
+[![Test Coverage](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator/coverage)
+[![Dependency Status](https://gemnasium.com/ManageIQ/httpd_configmap_generator.svg)](https://gemnasium.com/ManageIQ/httpd_configmap_generator)
+[![Security](https://hakiri.io/github/ManageIQ/httpd_configmap_generator/master.svg)](https://hakiri.io/github/ManageIQ/httpd_configmap_generator/master)
+
+[![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/authentication?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This GEM provides a CLI to automate the generation of auth-config maps 
 which can be used with the httpd auth pod for enabling external authentication.
 
