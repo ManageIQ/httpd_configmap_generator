@@ -16,7 +16,7 @@ module HttpdConfigmapGenerator
 
     def save(file_path)
       return unless sssd
-      config_file_backup(file_path, timestamp)
+      config_file_backup(file_path)
       info_msg("Saving SSSD to #{file_path}")
       sssd.save(file_path)
     end

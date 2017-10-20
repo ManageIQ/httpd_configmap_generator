@@ -27,12 +27,10 @@ module HttpdConfigmapGenerator
     TIMESTAMP_FORMAT     = "%Y%m%d_%H%M%S".freeze
 
     attr_accessor :opts
-    attr_accessor :timestamp
 
     def initialize(opts = {})
       @opts = opts
       @realm = @domain = nil
-      @timestamp = Time.now.strftime(TIMESTAMP_FORMAT)
     end
 
     def err_msg(msg)
