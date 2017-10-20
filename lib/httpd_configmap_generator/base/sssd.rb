@@ -22,13 +22,13 @@ module HttpdConfigmapGenerator
     end
 
     def configure_domain(domain)
-      domain = sssd.section("domain")
+      domain = section("domain/#{domain}")
       domain["ldap_user_extra_attrs"] = LDAP_ATTRS.keys.join(", ")
       domain["entry_cache_timeout"] = 600
     end
 
     def add_service(service)
-      services = sssd.section("sssd")["services"]
+      services = section("sssd")["services"]
       services = (services.split(",").map(&:strip) | [service]).join(",")
       sssd.section("sssd")["services"] = services
       sssd.section(service)
@@ -36,7 +36,7 @@ module HttpdConfigmapGenerator
 
     def configure_ifp
       add_service("ifp")
-      ifp = sssd.section("ifp")
+      ifp = section("ifp")
       ifp["allowed_uids"] = "#{APACHE_USER}, root"
       ifp["user_attributes"] = LDAP_ATTRS.keys.collect { |k| "+#{k}" }.join(", ")
     end
@@ -44,7 +44,11 @@ module HttpdConfigmapGenerator
     private
 
     def section(key)
-      key = sssd.entries.collect(&:key).select { |k| k =~ /^domain\/.*$/ }.first if key == "domain"
+      if key == "domain"
+        key = sssd.entries.collect(&:key).select { |k| k =~ /^domain\/.*$/ }.first
+      elsif key =~ /^domain\/.* $/
+        key = sssd.entries.collect(&:key).select { |k| k.downcase == key.downcase }.first
+      end
       sssd.section(key)
     end
   end
