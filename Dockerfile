@@ -11,6 +11,9 @@ LABEL name="httpd-configmap-generator" \
 ## For ruby
 ENV REF=master
 
+## Install packages that help troubleshoot authentication
+RUN yum -y install openldap-clients pamtester
+
 ## Auth Httpd Defaults
 ENV HTTPD_AUTH_TYPE=internal \
     HTTPD_AUTH_KERBEROS_REALMS=undefined
