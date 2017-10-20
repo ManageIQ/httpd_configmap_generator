@@ -29,7 +29,7 @@ module HttpdConfigmapGenerator
 
     def add_service(service)
       services = section("sssd")["services"]
-      services = (services.split(",").map(&:strip) | [service]).join(",")
+      services = (services.split(",").map(&:strip) | [service]).join(", ")
       sssd.section("sssd")["services"] = services
       sssd.section(service)
     end
