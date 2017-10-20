@@ -95,5 +95,16 @@ module HttpdConfigmapGenerator
       FileUtils.chown("apache", "root", KERBEROS_KEYTAB_FILE)
       FileUtils.chmod(0o640, KERBEROS_KEYTAB_FILE)
     end
+
+    def configure_sssd
+      info_msg("Configuring SSSD Service")
+      sssd = Sssd.new(opts)
+      sssd.load(SSSD_CONFIG)
+      sssd.configure_domain(domain)
+      sssd.add_service("pam")
+      sssd.configure_ifp
+      debug_msg("- Creating #{SSSD_CONFIG}")
+      sssd.save(SSSD_CONFIG)
+    end
   end
 end

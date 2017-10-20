@@ -97,6 +97,17 @@ module HttpdConfigmapGenerator
 
     private
 
+    def configure_sssd
+      info_msg("Configuring SSSD Service")
+      sssd = Sssd.new(opts)
+      sssd.load(SSSD_CONFIG)
+      sssd.configure_domain(domain)
+      sssd.add_service("pam")
+      sssd.configure_ifp
+      debug_msg("- Creating #{SSSD_CONFIG}")
+      sssd.save(SSSD_CONFIG)
+    end
+
     def configure_ipa_http_service
       info_msg("Configuring IPA HTTP Service")
       command_run!("/usr/bin/kinit", :params => [opts[:ipa_principal]], :stdin_data => opts[:ipa_password])
