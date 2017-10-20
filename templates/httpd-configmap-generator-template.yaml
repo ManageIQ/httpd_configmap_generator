@@ -40,7 +40,7 @@ objects:
         timeoutSeconds: 1200
     triggers:
     - type: ConfigChange
-    replicas: 0
+    replicas: 1
     selector:
       name: "${HTTPD_CONFIGMAP_GENERATOR_SERVICE_NAME}"
     template:

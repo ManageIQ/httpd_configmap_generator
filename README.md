@@ -196,7 +196,7 @@ $ cd httpd_configmap_generator
 $ docker build . -t manageiq/httpd_configmap_generator:latest
 ```
 
-### Running the httpd_configmap_generator container
+### Running the httpd\_configmap\_generator container
 
 
 ```
@@ -319,12 +319,6 @@ Deploy the Httpd Configmap Generator
 $ oc new-app --template=httpd-configmap-generator
 ```
 
-Scale up the Httpd Configmap Generator
-
-```
-$ oc scale dc httpd-configmap-generator --replicas=1
-```
-
 Check the readiness of the Httpd Configmap Generator
 
 ```
@@ -389,3 +383,9 @@ When done generating an auth-configmap, the httpd\_configmap\_generator pod can 
 $ oc scale dc httpd-configmap-generator --replicas=0
 ```
 
+or deleted if no longer needed:
+
+```
+$ oc delete all  -l app=httpd-configmap-generator
+$ oc delete pods -l app=httpd-configmap-generator
+```
