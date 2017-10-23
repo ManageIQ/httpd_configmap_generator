@@ -27,12 +27,10 @@ module HttpdConfigmapGenerator
     TIMESTAMP_FORMAT     = "%Y%m%d_%H%M%S".freeze
 
     attr_accessor :opts
-    attr_accessor :timestamp
 
     def initialize(opts = {})
       @opts = opts
       @realm = @domain = nil
-      @timestamp = Time.now.strftime(TIMESTAMP_FORMAT)
     end
 
     def err_msg(msg)
@@ -82,6 +80,17 @@ module HttpdConfigmapGenerator
     def validate_options(options)
       output_file = Pathname.new(options[:output]).cleanpath.to_s
       raise "Output file must live under /tmp" unless output_file.start_with?("/tmp/")
+    end
+
+    def configure_sssd
+      info_msg("Configuring SSSD Service")
+      sssd = Sssd.new(opts)
+      sssd.load(SSSD_CONFIG)
+      sssd.configure_domain(domain)
+      sssd.add_service("pam")
+      sssd.configure_ifp
+      debug_msg("- Creating #{SSSD_CONFIG}")
+      sssd.save(SSSD_CONFIG)
     end
   end
 end

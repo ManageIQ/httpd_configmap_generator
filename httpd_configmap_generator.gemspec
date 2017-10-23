@@ -17,13 +17,14 @@ Gem::Specification.new do |s|
   s.files         = Dir["{lib}/**,*", "LICENSE.txt", "README.md"]
   s.require_paths = ["lib"]
 
+  s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   s.add_development_dependency "rspec",    "~> 3.0"
   s.add_development_dependency "rake"
-  s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   s.add_development_dependency "simplecov"
 
   s.add_dependency "activesupport",        ">=5.0"
-  s.add_dependency "trollop",              "~> 2.1"
   s.add_dependency "awesome_spawn",        "~> 1.4"
+  s.add_dependency "iniparse",             "~> 1.4"
   s.add_dependency "more_core_extensions", "~> 3.4"
+  s.add_dependency "trollop",              "~> 2.1"
 end
