@@ -79,6 +79,24 @@ module HttpdConfigmapGenerator
 
     private
 
+    def configure_sssd
+      info_msg("Configuring SSSD Service")
+      sssd = Sssd.new(opts)
+      sssd.load(SSSD_CONFIG)
+      sssd.configure_domain(domain)
+      sssd.section("sssd")["domain"] = domain
+      sssd.section("sssd")["default_domain_suffix"] = domain
+
+      sssd.add_service("pam")
+      sssd.section("pam")["default_domain_suffix"] = domain
+
+      sssd.configure_ifp
+      sssd.section("ifp")["default_domain_suffix"] = domain
+
+      debug_msg("- Creating #{SSSD_CONFIG}")
+      sssd.save(SSSD_CONFIG)
+    end
+
     def join_ad_realm
       info_msg("Joining the AD Realm ...")
       debug_msg(" - realm join #{realm} ...")
