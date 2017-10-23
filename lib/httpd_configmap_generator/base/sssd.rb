@@ -44,9 +44,7 @@ module HttpdConfigmapGenerator
     private
 
     def section(key)
-      if key == "domain"
-        key = sssd.entries.collect(&:key).select { |k| k =~ /^domain\/.*$/ }.first
-      elsif key =~ /^domain\/.* $/
+      if key =~ /^domain\/.*$/
         key = sssd.entries.collect(&:key).select { |k| k.downcase == key.downcase }.first
       end
       sssd.section(key)
