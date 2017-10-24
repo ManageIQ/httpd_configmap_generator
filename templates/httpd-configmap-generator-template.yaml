@@ -69,12 +69,12 @@ objects:
               port: 80
             initialDelaySeconds: 10
             timeoutSeconds: 3
-#          resources:
-#            requests:
-#              memory: "${HTTPD_CONFIGMAP_GENERATOR_MEM_REQ}"
-#              cpu: "${HTTPD_CONFIGMAP_GENERATOR_CPU_REQ}"
-#            limits:
-#              memory: "${HTTPD_CONFIGMAP_GENERATOR_MEM_LIMIT}"
+          resources:
+            requests:
+              memory: "${HTTPD_CONFIGMAP_GENERATOR_MEM_REQ}"
+              cpu: "${HTTPD_CONFIGMAP_GENERATOR_CPU_REQ}"
+            limits:
+              memory: "${HTTPD_CONFIGMAP_GENERATOR_MEM_LIMIT}"
           lifecycle:
             postStart:
               exec:
