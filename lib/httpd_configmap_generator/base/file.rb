@@ -3,9 +3,8 @@ require "pathname"
 module HttpdConfigmapGenerator
   class Base
     def template_directory
-      @template_directory ||= begin
-        Pathname.new(Bundler.locked_gems.specs.select { |g| g.name == "httpd_configmap_generator" }.first.gem_dir).join("templates")
-      end
+      @template_directory ||=
+        Pathname.new(Gem::Specification.find_by_name("httpd_configmap_generator").full_gem_path).join("templates")
     end
 
     def cp_template(file, src_dir, dest_dir = "/")
