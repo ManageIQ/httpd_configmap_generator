@@ -14,7 +14,11 @@ Gem::Specification.new do |s|
   s.description   = "The Httpd Configmap Generator"
   s.licenses      = ["Apache-2.0"]
 
-  s.files         = Dir["{lib}/**,*", "LICENSE.txt", "README.md"]
+  s.files         = `git ls-files -z`.split("\x0").reject do |f|
+    f.match(%r{^(test|spec|features)/})
+  end
+  s.bindir        = "bin"
+  s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"

@@ -9,25 +9,21 @@
 
 [![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/authentication?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This GEM provides a CLI to automate the generation of auth-config maps 
+This GEM provides a CLI to automate the generation of auth-config maps
 which can be used with the httpd auth pod for enabling external authentication.
 
-Installing as follows:
+Install as follows:
 
 ```
-$ cd /opt
-$ git clone https://github.com/ManageIQ/httpd_configmap_generator.git
-$ cd httpd_configmap_generator
-$ bundle install
+gem install httpd_configmap_generator
 ```
-
 
 ## Running the tool
 
 Generating an auth-config map can be done by running the httpd\_configmap\_generator tool
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator
+$ httpd_configmap_generator
 
 Usage: httpd_configmap_generator auth_type | update | export [--help | options]
 Supported auth_type: active-directory, ipa, saml
@@ -36,7 +32,7 @@ Supported auth_type: active-directory, ipa, saml
 Showing the usage for each authentication type or sub-command as follows:
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa --help
+$ httpd_configmap_generator ipa --help
 ```
 
 ## Supported Authentication Types
@@ -56,12 +52,12 @@ map as per the following usage:
 
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update --help
-      httpd_configmap_generator 0.1.0 - External Authentication Configuration script
+$ httpd_configmap_generator update --help
+httpd_configmap_generator 0.1.0 - External Authentication Configuration script
 
-      Usage: httpd_configmap_generator auth_type | update | export [--help | options]
+Usage: httpd_configmap_generator auth_type | update | export [--help | options]
 
-      httpd_configmap_generator options are:
+httpd_configmap_generator options are:
   -V, --version         Version of the httpd_configmap_generator command
   -i, --input=<s>       Input config map file (default: )
   -o, --output=<s>      Output config map file (default: )
@@ -71,7 +67,7 @@ $ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update --help
   -h, --help            Show this message
 ```
 
-The `--add-file` option can be specified multiple times, one per file to add 
+The `--add-file` option can be specified multiple times, one per file to add
 to a configuration map.
 
 Supported file specification for the `--add-file` option are:
@@ -95,7 +91,7 @@ Examples:
 The file ownership and permissions will be based on the files specified.
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update \
+$ httpd_configmap_generator update \
   --input=/tmp/original-auth-configmap.yaml                    \
   --add-file=/etc/openldap/cacerts/primary-directory-cert.pem  \
   --add-file=/etc/openldap/cacerts/seconday-directory-cert.pem \
@@ -106,7 +102,7 @@ $ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update \
 
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update \
+$ httpd_configmap_generator update \
   --input=/tmp/original-auth-configmap.yaml                                        \
   --add-file=/tmp/uploaded-cert1,/etc/openldap/cacerts/primary-directory-cert.pem  \
   --add-file=/tmp/uploaded-cert2,/etc/openldap/cacerts/seconday-directory-cert.pem \
@@ -120,7 +116,7 @@ and `/tmp/uploaded-cert2` files will be used.
 ### Adding a target file with user specified ownership and mode:
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update \
+$ httpd_configmap_generator update \
   --input=/tmp/original-auth-configmap.yaml                          \
   --add-file=/tmp/secondary-keytab,/etc/http2.keytab,600:apache:root \
   --output=/tmp/updated-auth-configmap.yaml
@@ -129,7 +125,7 @@ $ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update \
 ### Adding files by URL:
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator update \
+$ httpd_configmap_generator update \
   --input=/tmp/original-auth-configmap.yaml \
   --add-file=http://aab-keycloak:8080/auth/realms/miq/protocol/saml/description,/etc/httpd/saml2/idp-metadata.xml,644:root:root \
   --output=/tmp/updated-auth-configmap.yaml
@@ -146,13 +142,12 @@ map as per the following usage:
 
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator export --help
+$ httpd_configmap_generator export --help
+httpd_configmap_generator 0.1.0 - External Authentication Configuration script
 
-      httpd_configmap_generator 0.1.0 - External Authentication Configuration script
+Usage: httpd_configmap_generator auth_type | update | export [--help | options]
 
-      Usage: httpd_configmap_generator auth_type | update | export [--help | options]
-
-      httpd_configmap_generator options are:
+httpd_configmap_generator options are:
   -V, --version       Version of the httpd_configmap_generator command
   -i, --input=<s>     Input config map file (default: )
   -l, --file=<s>      Config map file to export (default: )
@@ -167,7 +162,7 @@ Example:
 Extract the sssd.conf file out of the auth configuration map:
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator export \
+$ httpd_configmap_generator export \
   --input=/tmp/external-ipa.yaml \
   --file=/etc/sssd/sssd.conf     \
   --output=/tmp/sssd.conf
@@ -222,7 +217,7 @@ The tool can also be executed directly as follows:
 Example for generating a configuration map for IPA:
 
 ```
-$ docker exec $CONFIGMAP_GENERATOR_ID /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa \
+$ docker exec $CONFIGMAP_GENERATOR_ID httpd_configmap_generator ipa \
     --host=miq-appliance.example.com    \
     --ipa-server=ipaserver.example.com  \
     --ipa-domain=example.com            \
@@ -232,7 +227,7 @@ $ docker exec $CONFIGMAP_GENERATOR_ID /opt/httpd_configmap_generator/bin/httpd_c
     -o /tmp/external-ipa.yaml
 ```
 
-`--host` above must be the DNS of the application exposing the httpd auth pod, 
+`--host` above must be the DNS of the application exposing the httpd auth pod,
 
 i.e. ${APPLICATION_DOMAIN}
 
@@ -341,13 +336,13 @@ $ CONFIGMAP_GENERATOR_POD=`oc get pods | grep "httpd-configmap-generator" | cut 
 ### Generating a configmap for external authentication against IPA
 
 ```
-$ oc rsh $CONFIGMAP_GENERATOR_POD /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa ...
+$ oc rsh $CONFIGMAP_GENERATOR_POD httpd_configmap_generator ipa ...
 ```
 
 Example configuration:
 
 ```
-$ oc rsh $CONFIGMAP_GENERATOR_POD /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa \
+$ oc rsh $CONFIGMAP_GENERATOR_POD httpd_configmap_generator ipa \
     --host=miq-appliance.example.com    \
     --ipa-server=ipaserver.example.com  \
     --ipa-domain=example.com            \
@@ -357,7 +352,7 @@ $ oc rsh $CONFIGMAP_GENERATOR_POD /opt/httpd_configmap_generator/bin/httpd_confi
     -o /tmp/external-ipa.yaml
 ```
 
-`--host` above must be the DNS of the application exposing the httpd auth pod, 
+`--host` above must be the DNS of the application exposing the httpd auth pod,
 
 i.e. ${APPLICATION_DOMAIN}
 
@@ -375,7 +370,7 @@ $ oc replace configmaps httpd-auth-configs --filename ./external-ipa.yaml
 ```
 
 To generate a new auth configuration map it is recommended to redeploy the httpd\_configmap\_generator
-pod first to get a clean environment before running the /opt/httpd\_configmap\_generator/bin/httpd\_configmap\_generator tool.
+pod first to get a clean environment before running the httpd\_configmap\_generator tool.
 
 When done generating an auth-configmap, the httpd\_configmap\_generator pod can simply be scaled down:
 

@@ -70,8 +70,8 @@ module HttpdConfigmapGenerator
       @opts = opts
       unconfigure if configured? && opts[:force]
       raise "#{self.class.name} Already Configured" if configured?
-      unless ENV["AUTH_CONFIG_DIRECTORY"]
-        raise "Not running in auth-config container - Skipping #{self.class.name} configuration"
+      unless ENV["HTTPD_AUTH_TYPE"]
+        raise "Not running in httpd_configmap_generator container - Skipping #{self.class.name} configuration"
       end
       configure(opts)
     end

@@ -7,8 +7,7 @@
 # -o filename: for the generated auth-config map.
 #
 
-Dir.chdir(File.join(__dir__, "..")) { require 'bundler/setup' }
-
+require "bundler/setup"
 require "trollop"
 require "httpd_configmap_generator"
 
@@ -25,11 +24,11 @@ module HttpdConfigmapGenerator
       opts = Trollop.options do
         version("#{CMD} #{HttpdConfigmapGenerator::VERSION} - External Authentication Configuration script")
         banner <<-EOS
-      #{version}
+#{version}
 
-      Usage: #{CMD} auth_type | update | export [--help | options]
+Usage: #{CMD} auth_type | update | export [--help | options]
 
-      #{CMD} options are:
+#{CMD} options are:
       EOS
         opt :version, "Version of the #{CMD} command",
             :default => false, :short => "-V"

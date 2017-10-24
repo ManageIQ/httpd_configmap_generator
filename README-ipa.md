@@ -7,12 +7,12 @@ for an IPA server.
 ## Usage for the `ipa` auth-type:
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa --help
-      httpd_configmap_generator 0.1.0 - External Authentication Configuration script
+$ httpd_configmap_generator ipa --help
+httpd_configmap_generator 0.1.0 - External Authentication Configuration script
 
-      Usage: httpd_configmap_generator auth_type | update | export [--help | options]
+Usage: httpd_configmap_generator auth_type | update | export [--help | options]
 
-      httpd_configmap_generator options are:
+httpd_configmap_generator options are:
   -V, --version              Version of the httpd_configmap_generator command
   -h, --host=<s>             Application Domain (default: )
   -o, --output=<s>           Configuration map file to create (default: )
@@ -29,7 +29,7 @@ $ /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa --help
 ### Example:
 
 ```
-$ /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa \
+$ httpd_configmap_generator ipa \
    --force                                 \
    --host=application.example.com          \
    --ipa-server=ipaserver7.example.com     \
@@ -39,5 +39,3 @@ $ /opt/httpd_configmap_generator/bin/httpd_configmap_generator ipa \
    --ipa-password=smartvm                  \
    -o /tmp/external-ipa.yaml
 ```
-
-  
