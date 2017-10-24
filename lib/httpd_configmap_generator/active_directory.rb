@@ -85,7 +85,7 @@ module HttpdConfigmapGenerator
       sssd = Sssd.new(opts)
       sssd.load(SSSD_CONFIG)
       sssd.configure_domain(domain)
-      sssd.section("domain")["ad_server"] = opts[:ad_server] if opts[:ad_server].present?
+      sssd.section("domain/#{domain}")["ad_server"] = opts[:ad_server] if opts[:ad_server].present?
 
       sssd.section("sssd")["domains"] = domain
       sssd.section("sssd")["default_domain_suffix"] = domain
