@@ -41,8 +41,6 @@ module HttpdConfigmapGenerator
       ifp["user_attributes"] = LDAP_ATTRS.keys.collect { |k| "+#{k}" }.join(", ")
     end
 
-    private
-
     def section(key)
       if key =~ /^domain\/.*$/
         key = sssd.entries.collect(&:key).select { |k| k.downcase == key.downcase }.first

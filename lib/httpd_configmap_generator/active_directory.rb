@@ -17,7 +17,8 @@ module HttpdConfigmapGenerator
 
     def optional_options
       super.merge(
-        :ad_realm => { :description => "Active Directory Realm" }
+        :ad_realm  => { :description => "Active Directory Realm"  },
+        :ad_server => { :description => "Active Directory Server" }
       )
     end
 
@@ -78,6 +79,20 @@ module HttpdConfigmapGenerator
     end
 
     private
+
+    def configure_sssd
+      info_msg("Configuring SSSD Service")
+      sssd = Sssd.new(opts)
+      sssd.load(SSSD_CONFIG)
+      sssd.configure_domain(domain)
+      sssd.section("domain/#{domain}")["ad_server"] = opts[:ad_server] if opts[:ad_server].present?
+      sssd.section("sssd")["domains"] = domain
+      sssd.section("sssd")["default_domain_suffix"] = domain
+      sssd.add_service("pam")
+      sssd.configure_ifp
+      debug_msg("- Creating #{SSSD_CONFIG}")
+      sssd.save(SSSD_CONFIG)
+    end
 
     def join_ad_realm
       info_msg("Joining the AD Realm ...")
