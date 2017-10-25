@@ -6,19 +6,14 @@ This documents how to run the httpd\_configmap\_generator tool to configure the 
 
 ```
 $ httpd_configmap_generator saml --help
-httpd_configmap_generator 0.1.0 - External Authentication Configuration script
-
-Usage: httpd_configmap_generator auth_type | update | export [--help | options]
-
-httpd_configmap_generator options are:
-  -V, --version                  Version of the httpd_configmap_generator command
-  -h, --host=<s>                 Application Domain (default: )
-  -o, --output=<s>               Configuration map file to create (default: )
+Options:
+  -h, --host=<s>                 Application Domain
+  -o, --output=<s>               Configuration map file to create
   -f, --force                    Force configuration if configured already
   -d, --debug                    Enable debugging
   -k, --keycloak-add-metadata    Download and add the Keycloak metadata file
-  -e, --keycloak-server=<s>      Keycloak Server Fqdn or IP (default: )
-  -y, --keycloak-realm=<s>       Keycloak Realm for this client (default: )
+  -e, --keycloak-server=<s>      Keycloak Server FQDN or IP
+  -y, --keycloak-realm=<s>       Keycloak Realm for this client
   -l, --help                     Show this message
 ```
 
