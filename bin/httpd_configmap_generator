@@ -7,7 +7,7 @@
 # -o filename: for the generated auth-config map.
 #
 
-require "bundler/setup"
+Dir.chdir(__dir__) { require "bundler/setup" }
 require "trollop"
 require "httpd_configmap_generator"
 
