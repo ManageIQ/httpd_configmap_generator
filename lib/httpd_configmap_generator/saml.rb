@@ -17,7 +17,7 @@ module HttpdConfigmapGenerator
       super.merge(
         :keycloak_add_metadata => { :description => "Download and add the Keycloak metadata file",
                                     :default     => false },
-        :keycloak_server       => { :description => "Keycloak Server Fqdn or IP" },
+        :keycloak_server       => { :description => "Keycloak Server FQDN or IP" },
         :keycloak_realm        => { :description => "Keycloak Realm for this client"}
       )
     end

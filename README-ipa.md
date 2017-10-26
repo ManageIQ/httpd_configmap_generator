@@ -8,21 +8,16 @@ for an IPA server.
 
 ```
 $ httpd_configmap_generator ipa --help
-httpd_configmap_generator 0.1.0 - External Authentication Configuration script
-
-Usage: httpd_configmap_generator auth_type | update | export [--help | options]
-
-httpd_configmap_generator options are:
-  -V, --version              Version of the httpd_configmap_generator command
-  -h, --host=<s>             Application Domain (default: )
-  -o, --output=<s>           Configuration map file to create (default: )
-  -i, --ipa-server=<s>       IPA Server Fqdn (default: )
-  -p, --ipa-password=<s>     IPA Server Password (default: )
+Options:
+  -h, --host=<s>             Application Domain
+  -o, --output=<s>           Configuration map file to create
+  -i, --ipa-server=<s>       IPA Server FQDN
+  -p, --ipa-password=<s>     IPA Server Password
   -f, --force                Force configuration if configured already
   -d, --debug                Enable debugging
   -a, --ipa-principal=<s>    IPA Server Principal (default: admin)
-  -m, --ipa-domain=<s>       Domain of IPA Server (default: )
-  -r, --ipa-realm=<s>        Realm of IPA Server (default: )
+  -m, --ipa-domain=<s>       Domain of IPA Server
+  -r, --ipa-realm=<s>        Realm of IPA Server
   -e, --help                 Show this message
 ```
 

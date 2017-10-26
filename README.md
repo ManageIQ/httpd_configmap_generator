@@ -23,10 +23,16 @@ gem install httpd_configmap_generator
 Generating an auth-config map can be done by running the httpd\_configmap\_generator tool
 
 ```
-$ httpd_configmap_generator
+$ httpd_configmap_generator --help
+httpd_configmap_generator 0.1.1 - External Authentication Configuration script
 
 Usage: httpd_configmap_generator auth_type | update | export [--help | options]
-Supported auth_type: active-directory, ipa, saml
+
+supported auth_type: active-directory, ipa, saml
+
+httpd_configmap_generator options are:
+  -V, --version    Version of the httpd_configmap_generator command
+  -h, --help       Show this message
 ```
 
 Showing the usage for each authentication type or sub-command as follows:
@@ -53,17 +59,12 @@ map as per the following usage:
 
 ```
 $ httpd_configmap_generator update --help
-httpd_configmap_generator 0.1.0 - External Authentication Configuration script
-
-Usage: httpd_configmap_generator auth_type | update | export [--help | options]
-
-httpd_configmap_generator options are:
-  -V, --version         Version of the httpd_configmap_generator command
-  -i, --input=<s>       Input config map file (default: )
-  -o, --output=<s>      Output config map file (default: )
+Options:
+  -i, --input=<s>       Input config map file
+  -o, --output=<s>      Output config map file
   -f, --force           Force configuration if configured already
   -d, --debug           Enable debugging
-  -a, --add-file=<s>    Add file to config map (default: )
+  -a, --add-file=<s>    Add file to config map
   -h, --help            Show this message
 ```
 
@@ -143,15 +144,10 @@ map as per the following usage:
 
 ```
 $ httpd_configmap_generator export --help
-httpd_configmap_generator 0.1.0 - External Authentication Configuration script
-
-Usage: httpd_configmap_generator auth_type | update | export [--help | options]
-
-httpd_configmap_generator options are:
-  -V, --version       Version of the httpd_configmap_generator command
-  -i, --input=<s>     Input config map file (default: )
-  -l, --file=<s>      Config map file to export (default: )
-  -o, --output=<s>    The output file being exported (default: )
+Options:
+  -i, --input=<s>     Input config map file
+  -l, --file=<s>      Config map file to export
+  -o, --output=<s>    The output file being exported
   -f, --force         Force configuration if configured already
   -d, --debug         Enable debugging
   -h, --help          Show this message

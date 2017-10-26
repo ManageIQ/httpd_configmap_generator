@@ -20,18 +20,40 @@ end
 
 module HttpdConfigmapGenerator
   class Cli
-    def parse_arguments(auth_config)
-      opts = Trollop.options do
+    SUB_COMMANDS = [HttpdConfigmapGenerator.supported_auth_types] | %w(update export)
+
+    def run
+      Trollop.options do
         version("#{CMD} #{HttpdConfigmapGenerator::VERSION} - External Authentication Configuration script")
         banner <<-EOS
 #{version}
 
 Usage: #{CMD} auth_type | update | export [--help | options]
 
+supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.join(', ')}
+
 #{CMD} options are:
       EOS
         opt :version, "Version of the #{CMD} command",
             :default => false, :short => "-V"
+        stop_on(SUB_COMMANDS)
+      end
+
+      auth_type = ARGV.shift
+      Trollop.die "Must specify an authentication type" if auth_type.nil?
+
+      begin
+        auth_config =
+          case auth_type
+          when "update" then HttpdConfigmapGenerator::Update.new
+          when "export" then HttpdConfigmapGenerator::Export.new
+          else HttpdConfigmapGenerator.new_config(auth_type)
+          end
+      rescue => err
+        error_msg(err.to_s)
+      end
+
+      params = Trollop.options do
         auth_config.required_options.each do |key, key_options|
           opt key, key_options[:description], HttpdConfigmapGenerator::Cli.options_for(key_options, true)
         end
@@ -39,43 +61,22 @@ Usage: #{CMD} auth_type | update | export [--help | options]
           opt key, key_options[:description], HttpdConfigmapGenerator::Cli.options_for(key_options)
         end
       end
-      opts
-    end
 
-    def run_configure(auth_type)
-      begin
-        auth_config = HttpdConfigmapGenerator.new_config(auth_type)
-      rescue => err
-        error_msg(err.to_s)
+      case auth_type
+      when "update" then auth_config.update(params)
+      when "export" then auth_config.export(params)
+      else auth_config.run_configure(params)
       end
-
-      auth_config.run_configure(parse_arguments(auth_config))
-    end
-
-    def run_update
-      begin
-        auth_config = HttpdConfigmapGenerator::Update.new
-      rescue => err
-        error_msg(err.to_s)
-      end
-
-      auth_config.update(parse_arguments(auth_config))
-    end
-
-    def run_export
-      begin
-        auth_config = HttpdConfigmapGenerator::Export.new
-      rescue => err
-        error_msg(err.to_s)
-      end
-
-      auth_config.export(parse_arguments(auth_config))
     end
 
     def self.options_for(key_options, required = false)
       options = {}
-      options[:default] = key_options.key?(:default) ? key_options[:default] : ""
-      options[:required] = true if required
+      if key_options[:default].nil?
+        options[:type] = key_options[:type] || :string
+      else
+        options[:default] = key_options[:default]
+      end
+      options[:required] = required
       options[:short]    = key_options[:short] if key_options[:short]
       options[:multi]    = key_options[:multi] if key_options[:multi]
       options
@@ -83,19 +84,4 @@ Usage: #{CMD} auth_type | update | export [--help | options]
   end
 end
 
-if ARGV.empty?
-  error_msg("
-Usage: #{CMD} auth_type | update | export [--help | options]
-Supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.join(', ')}
-")
-else
-  auth_type = ARGV.shift
-  case auth_type
-  when "update"
-    HttpdConfigmapGenerator::Cli.new.run_update
-  when "export"
-    HttpdConfigmapGenerator::Cli.new.run_export
-  else
-    HttpdConfigmapGenerator::Cli.new.run_configure(auth_type)
-  end
-end
+HttpdConfigmapGenerator::Cli.new.run

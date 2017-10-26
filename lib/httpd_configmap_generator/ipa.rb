@@ -9,7 +9,7 @@ module HttpdConfigmapGenerator
 
     def required_options
       super.merge(
-        :ipa_server   => { :description => "IPA Server Fqdn"     },
+        :ipa_server   => { :description => "IPA Server FQDN"     },
         :ipa_password => { :description => "IPA Server Password" }
       )
     end
