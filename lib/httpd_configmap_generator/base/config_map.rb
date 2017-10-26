@@ -84,28 +84,40 @@ module HttpdConfigmapGenerator
       file_specs = []
       file_list.each do |file_to_add|
         file_spec = file_to_add.split(",").map(&:strip)
-        case file_spec.length
-        when 1
-          file = file_spec.first
-          file_entry = file_entry_spec(file)
-        when 2
-          source_file, target_file = file_spec
-          raise "Must specify a mode for URL file sources" if source_file =~ URI.regexp(%w(http https))
-          file_entry = file_entry_spec(source_file, target_file)
-        when 3
-          source_file, target_file, mode = file_spec
-          if source_file =~ URI.regexp(%w(http https))
-            fetch_network_file(source_file, target_file)
-            file_entry = file_entry_spec(target_file, target_file, mode)
+        file_entry =
+          case file_spec.length
+          when 1
+            file_entry_spec(file_spec.first)
+          when 2
+            source_file, target_file = file_spec
+            file_entry_for_source_target(source_file, target_file)
+          when 3
+            source_file, target_file, mode = file_spec
+            file_entry_for_source_target_mode(source_file, target_file, mode)
           else
-            file_entry = file_entry_spec(source_file, target_file, mode)
+            raise "Invalid file specification #{file_to_add}"
           end
-        else
-          raise "Invalid file specification #{file_to_add}"
-        end
         file_specs << file_entry
       end
       file_specs.sort_by { |file_spec| file_spec[:basename] }
+    end
+
+    def file_entry_for_source_target(source_file, target_file)
+      raise "Must specify a mode for URL file sources" if source_file =~ URI.regexp(%w(http https))
+      file_entry = file_entry_spec(source_file, target_file)
+      file_entry[:source_file] = source_file
+      file_entry
+    end
+
+    def file_entry_for_source_target_mode(source_file, target_file, mode)
+      if source_file =~ URI.regexp(%w(http https))
+        fetch_network_file(source_file, target_file)
+        file_entry = file_entry_spec(target_file, target_file, mode)
+      else
+        file_entry = file_entry_spec(source_file, target_file, mode)
+        file_entry[:source_file] = source_file
+      end
+      file_entry
     end
 
     def file_entry_spec(source_file, target_file = nil, mode = nil)
@@ -152,7 +164,7 @@ module HttpdConfigmapGenerator
 
     def include_files(file_specs)
       file_specs.each do |file_spec|
-        content = File.read(file_spec[:target])
+        content = File.read(file_spec[:source_file] || file_spec[:target])
         content = Base64.encode64(content) if file_spec[:binary]
         # encode(:universal_newline => true) will convert \r\n to \n, necessary for to_yaml to render properly.
         config_map[DATA_SECTION].merge!(file_basename(file_spec) => content.encode(:universal_newline => true))
