@@ -28,7 +28,7 @@ httpd_configmap_generator 0.1.1 - External Authentication Configuration script
 
 Usage: httpd_configmap_generator auth_type | update | export [--help | options]
 
-supported auth_type: active-directory, ipa, saml
+supported auth_type: active-directory, ipa, ldap, saml
 
 httpd_configmap_generator options are:
   -V, --version    Version of the httpd_configmap_generator command
@@ -43,11 +43,12 @@ $ httpd_configmap_generator ipa --help
 
 ## Supported Authentication Types
 
-|auth-type         | Identity Provider/Environment                  | for usage: |
-|------------------|------------------------------------------------|------------|
-| active-directory | Active Directory domain realm join             | [README-active-directory](README-active-directory.md) |
-| ipa              | IPA, IPA 2-factor authentication, IPA/AD Trust | [README-ipa](README-ipa.md) |
-| saml             | Keycloak, etc.                                 | [README-saml](README-saml.md) |
+|auth-type         | Identity Provider/Environment                    | for usage:                                            |
+|------------------|--------------------------------------------------|-------------------------------------------------------|
+| active-directory | Active Directory domain realm join               | [README-active-directory](README-active-directory.md) |
+| ipa              | IPA, IPA 2-factor authentication, IPA/AD Trust   | [README-ipa](README-ipa.md)                           |
+| ldap             | Ldap directories                                 | [README-ldap](README-ldap.md)                         |
+| saml             | Keycloak, etc.                                   | [README-saml](README-saml.md)                         |
 
 ___
 
