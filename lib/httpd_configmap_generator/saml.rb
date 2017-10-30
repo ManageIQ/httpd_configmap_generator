@@ -2,7 +2,7 @@ module HttpdConfigmapGenerator
   class Saml < Base
     MELLON_CREATE_METADATA_COMMAND = "/usr/libexec/mod_auth_mellon/mellon_create_metadata.sh".freeze
     SAML2_CONFIG_DIRECTORY = "/etc/httpd/saml2".freeze
-    MIQSP_METADATA_FILE    = "#{SAML2_CONFIG_DIRECTORY}/miqsp-metadata.xml".freeze
+    SP_METADATA_FILE       = "#{SAML2_CONFIG_DIRECTORY}/sp-metadata.xml".freeze
     IDP_METADATA_FILE      = "#{SAML2_CONFIG_DIRECTORY}/idp-metadata.xml".freeze
     AUTH = {
       :type    => "saml",
@@ -24,9 +24,9 @@ module HttpdConfigmapGenerator
 
     def persistent_files
       file_list = %w(
-        /etc/httpd/saml2/miqsp-key.key
-        /etc/httpd/saml2/miqsp-cert.cert
-        /etc/httpd/saml2/miqsp-metadata.xml
+        /etc/httpd/saml2/sp-key.key
+        /etc/httpd/saml2/sp-cert.cert
+        /etc/httpd/saml2/sp-metadata.xml
       )
       file_list += [IDP_METADATA_FILE] if opts[:keycloak_add_metadata]
       file_list
@@ -53,7 +53,7 @@ module HttpdConfigmapGenerator
     end
 
     def configured?
-      File.exist?(MIQSP_METADATA_FILE)
+      File.exist?(SP_METADATA_FILE)
     end
 
     def unconfigure
@@ -76,18 +76,18 @@ module HttpdConfigmapGenerator
       info_msg("Renaming mellon config files")
       Dir.chdir(SAML2_CONFIG_DIRECTORY) do
         Dir.glob("https_*.*") do |mellon_file|
-          miq_saml2_file = nil
+          saml2_file = nil
           case mellon_file
           when /^https_.*\.key$/
-            miq_saml2_file = "miqsp-key.key"
+            saml2_file = "sp-key.key"
           when /^https_.*\.cert$/
-            miq_saml2_file = "miqsp-cert.cert"
+            saml2_file = "sp-cert.cert"
           when /^https_.*\.xml$/
-            miq_saml2_file = "miqsp-metadata.xml"
+            saml2_file = "sp-metadata.xml"
           end
-          if miq_saml2_file
-            debug_msg("- renaming #{mellon_file} to #{miq_saml2_file}")
-            File.rename(mellon_file, miq_saml2_file)
+          if saml2_file
+            debug_msg("- renaming #{mellon_file} to #{saml2_file}")
+            File.rename(mellon_file, saml2_file)
           end
         end
       end

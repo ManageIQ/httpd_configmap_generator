@@ -56,10 +56,10 @@ $ httpd_configmap_generator saml     \
 In the above example, the auth configmap file would include the following files:
 
 * /etc/httpd/saml2/
-  - miqsp-metadata.xml
-  - miqsp-cert.cert
-  - miqsp-key.key
+  - sp-metadata.xml
+  - sp-cert.cert
+  - sp-key.key
   - idp-metadata.xml
 
-For Keycloak, the `miqsp-metadata.xml` file can be imported to create the Client ID for
+For Keycloak, the `sp-metadata.xml` file can be imported to create the Client ID for
 the `application.example.com` application domain.

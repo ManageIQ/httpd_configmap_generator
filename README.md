@@ -129,7 +129,7 @@ $ httpd_configmap_generator update \
 ```
 $ httpd_configmap_generator update \
   --input=/tmp/original-auth-configmap.yaml \
-  --add-file=http://aab-keycloak:8080/auth/realms/miq/protocol/saml/description,/etc/httpd/saml2/idp-metadata.xml,644:root:root \
+  --add-file=http://aab-keycloak:8080/auth/realms/testrealm/protocol/saml/description,/etc/httpd/saml2/idp-metadata.xml,644:root:root \
   --output=/tmp/updated-auth-configmap.yaml
 ```
 
@@ -215,7 +215,7 @@ Example for generating a configuration map for IPA:
 
 ```
 $ docker exec $CONFIGMAP_GENERATOR_ID httpd_configmap_generator ipa \
-    --host=miq-appliance.example.com    \
+    --host=appliance.example.com        \
     --ipa-server=ipaserver.example.com  \
     --ipa-domain=example.com            \
     --ipa-realm=EXAMPLE.COM             \
@@ -262,18 +262,26 @@ ___
 
 #### If running without OCI systemd hooks (Minishift)
 
-The httpd-configmap-generator service account must be added to the miq-sysadmin SCC before the Httpd Auth Config pod can run.
+The httpd-configmap-generator service account must be added to the httpd-scc-sysadmin SCC before the Httpd Configmap Generator can run.
 
 ##### As Admin
 
-```
-$ oc adm policy add-scc-to-user miq-sysadmin system:serviceaccount:<your-namespace>:httpd-configmap-generator
-```
-
-Verify that the httpd-configmap-generator service account is now included in the miq-sysadmin SCC:
+Create the httpd-scc-sysadmin SCC:
 
 ```
-$ oc describe scc miq-sysadmin | grep Users
+$ oc create -f templates/httpd-scc-sysadmin.yaml
+```
+
+Include the httpd-configmap-generator service account with the new SCC:
+
+```
+$ oc adm policy add-scc-to-user httpd-scc-sysadmin system:serviceaccount:<your-namespace>:httpd-configmap-generator
+```
+
+Verify that the httpd-configmap-generator service account is now included in the httpd-scc-sysadmin SCC:
+
+```
+$ oc describe scc httpd-scc-sysadmin | grep Users
 Users:        system:serviceaccount:<your-namespace>:httpd-configmap-generator
 ```
 
@@ -285,7 +293,7 @@ Users:        system:serviceaccount:<your-namespace>:httpd-configmap-generator
 $ oc adm policy add-scc-to-user anyuid system:serviceaccount:<your-namespace>:httpd-configmap-generator
 ```
 
-Verify that the httpd-configmap-generator service account is now included in the miq-sysadmin SCC:
+Verify that the httpd-configmap-generator service account is included in the anyuid SCC:
 
 ```
 $ oc describe scc anyuid | grep Users
@@ -340,7 +348,7 @@ Example configuration:
 
 ```
 $ oc rsh $CONFIGMAP_GENERATOR_POD httpd_configmap_generator ipa \
-    --host=miq-appliance.example.com    \
+    --host=appliance.example.com        \
     --ipa-server=ipaserver.example.com  \
     --ipa-domain=example.com            \
     --ipa-realm=EXAMPLE.COM             \
