@@ -14,8 +14,10 @@ Gem::Specification.new do |s|
   s.description   = "The Httpd Configmap Generator"
   s.licenses      = ["Apache-2.0"]
 
-  s.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+  if Dir.exist?(File.join(__dir__, ".git"))
+    s.files = `git ls-files -z`.split("\x0").reject do |f|
+      f.match(%r{^(test|spec|features)/})
+    end
   end
   s.bindir        = "bin"
   s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) } - %w(console setup)
