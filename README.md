@@ -260,8 +260,6 @@ ___
 
 ### Pre-deployment tasks
 
-#### If running without OCI systemd hooks (Minishift)
-
 The httpd-configmap-generator service account must be added to the httpd-scc-sysadmin SCC before the Httpd Configmap Generator can run.
 
 ##### As Admin
@@ -284,22 +282,6 @@ Verify that the httpd-configmap-generator service account is now included in the
 $ oc describe scc httpd-scc-sysadmin | grep Users
 Users:        system:serviceaccount:<your-namespace>:httpd-configmap-generator
 ```
-
-#### If running  with OCI systemd hooks
-
-##### As Admin
-
-```
-$ oc adm policy add-scc-to-user anyuid system:serviceaccount:<your-namespace>:httpd-configmap-generator
-```
-
-Verify that the httpd-configmap-generator service account is included in the anyuid SCC:
-
-```
-$ oc describe scc anyuid | grep Users
-Users:        system:serviceaccount:<your-namespace>:httpd-configmap-generator
-```
-
 
 ### Deploy the Httpd Configmap Generator Application
 
