@@ -323,20 +323,20 @@ $ CONFIGMAP_GENERATOR_POD=`oc get pods | grep "httpd-configmap-generator" | cut 
 ### Generating a configmap for external authentication against IPA
 
 ```
-$ oc rsh $CONFIGMAP_GENERATOR_POD httpd_configmap_generator ipa ...
+$ oc exec $CONFIGMAP_GENERATOR_POD  -- bash -c 'httpd_configmap_generator ipa ...
 ```
 
 Example configuration:
 
 ```
-$ oc rsh $CONFIGMAP_GENERATOR_POD httpd_configmap_generator ipa \
+$ oc exec $CONFIGMAP_GENERATOR_POD -- bash -c 'httpd_configmap_generator ipa \
     --host=appliance.example.com        \
     --ipa-server=ipaserver.example.com  \
     --ipa-domain=example.com            \
     --ipa-realm=EXAMPLE.COM             \
     --ipa-principal=admin               \
     --ipa-password=smartvm1             \
-    -o /tmp/external-ipa.yaml
+    -o /tmp/external-ipa.yaml'
 ```
 
 `--host` above must be the DNS of the application exposing the httpd auth pod,
