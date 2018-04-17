@@ -1,3 +1,5 @@
+require "socket"               
+
 module HttpdConfigmapGenerator
   class Ipa < Base
     IPA_INSTALL_COMMAND  = "/usr/sbin/ipa-client-install".freeze
@@ -49,6 +51,7 @@ module HttpdConfigmapGenerator
     end
 
     def configure(opts)
+      opts[:host] = get_canonical_hostname(opts[:host])
       update_hostname(opts[:host])
       command_run!(IPA_INSTALL_COMMAND,
                    :params => [
@@ -117,6 +120,12 @@ module HttpdConfigmapGenerator
       command_run!(IPA_GETKEYTAB, :params => {"-s" => opts[:ipa_server], "-k" => HTTP_KEYTAB, "-p" => service.name})
       FileUtils.chown(APACHE_USER, nil, HTTP_KEYTAB)
       FileUtils.chmod(0o600, HTTP_KEYTAB)
+    end
+
+    def get_canonical_hostname(hostname)
+      Socket.gethostbyname(hostname)[0]
+    rescue SocketError
+      hostname
     end
   end
 end
