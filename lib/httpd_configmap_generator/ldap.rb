@@ -55,8 +55,7 @@ module HttpdConfigmapGenerator
          /etc/pam.d/smartcard-auth-ac
          /etc/pam.d/system-auth-ac
          /etc/sssd/sssd.conf
-         /etc/sysconfig/authconfig
-         /etc/sysconfig/network) + [opts[:cert_file]]
+         /etc/sysconfig/authconfig) + [opts[:cert_file]]
     end
 
     def configure(opts)

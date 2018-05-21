@@ -37,7 +37,6 @@ module HttpdConfigmapGenerator
         /etc/resolv.conf
         /etc/sssd/sssd.conf
         /etc/sysconfig/authconfig
-        /etc/sysconfig/network
       )
     end
 
