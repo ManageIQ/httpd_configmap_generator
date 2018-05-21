@@ -46,6 +46,7 @@ module HttpdConfigmapGenerator
         /etc/pki/ca-trust/source/ipa.p11-kit
         /etc/sssd/sssd.conf
         /etc/sysconfig/authconfig
+        /etc/sysconfig/network
       )
     end
 
