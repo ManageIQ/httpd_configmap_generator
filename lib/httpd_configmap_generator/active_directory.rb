@@ -9,6 +9,7 @@ module HttpdConfigmapGenerator
 
     def required_options
       super.merge(
+        :ad_server   => { :description => "Active Directory Server"   },
         :ad_domain   => { :description => "Active Directory Domain"   },
         :ad_user     => { :description => "Active Directory User"     },
         :ad_password => { :description => "Active Directory Password" }
@@ -17,8 +18,7 @@ module HttpdConfigmapGenerator
 
     def optional_options
       super.merge(
-        :ad_realm  => { :description => "Active Directory Realm"  },
-        :ad_server => { :description => "Active Directory Server" }
+        :ad_realm  => { :description => "Active Directory Realm"  }
       )
     end
 
@@ -34,7 +34,6 @@ module HttpdConfigmapGenerator
         /etc/pam.d/postlogin-ac
         /etc/pam.d/smartcard-auth-ac
         /etc/pam.d/system-auth-ac
-        /etc/resolv.conf
         /etc/sssd/sssd.conf
         /etc/sysconfig/authconfig
       )
