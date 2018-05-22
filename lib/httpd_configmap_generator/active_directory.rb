@@ -34,7 +34,6 @@ module HttpdConfigmapGenerator
         /etc/pam.d/postlogin-ac
         /etc/pam.d/smartcard-auth-ac
         /etc/pam.d/system-auth-ac
-        /etc/resolv.conf
         /etc/sssd/sssd.conf
         /etc/sysconfig/authconfig
       )
