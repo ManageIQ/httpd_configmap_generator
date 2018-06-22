@@ -11,6 +11,8 @@ module HttpdConfigmapGenerator
 
     def required_options
       super.merge(
+        :host         => { :description => "Application Domain",
+                           :short       => "-h" },
         :ipa_server   => { :description => "IPA Server FQDN"     },
         :ipa_password => { :description => "IPA Server Password" }
       )

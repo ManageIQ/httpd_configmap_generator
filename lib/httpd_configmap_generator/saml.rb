@@ -10,7 +10,9 @@ module HttpdConfigmapGenerator
     }.freeze
 
     def required_options
-      super
+      super.merge(
+        :host => { :description => "Application Domain", :short => "-h" },
+      )
     end
 
     def optional_options

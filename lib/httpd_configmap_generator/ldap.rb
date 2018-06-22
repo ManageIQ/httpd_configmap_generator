@@ -10,6 +10,8 @@ module HttpdConfigmapGenerator
 
     def required_options
       super.merge(
+        :host        => { :description => "Application Domain",
+                          :short       => "-h" },
         :cert_file   => { :description => "Cert File" },
         :ldap_host   => { :description => "LDAP Directory Host FQDN" },
         :ldap_mode   => { :description => "ldap | ldaps" },

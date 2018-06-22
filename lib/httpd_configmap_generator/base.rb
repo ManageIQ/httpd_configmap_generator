@@ -54,10 +54,7 @@ module HttpdConfigmapGenerator
 
     def required_options
       {
-        :host   => { :description => "Application Domain",
-                     :short       => "-h" },
-        :output => { :description => "Configuration map file to create",
-                     :short       => "-o" }
+        :output => { :description => "Configuration map file to create", :short => "-o" }
       }
     end
 

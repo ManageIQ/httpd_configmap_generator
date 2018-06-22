@@ -9,6 +9,8 @@ module HttpdConfigmapGenerator
 
     def required_options
       super.merge(
+        :host        => { :description => "Application Domain",
+                          :short       => "-h" },
         :ad_domain   => { :description => "Active Directory Domain"   },
         :ad_user     => { :description => "Active Directory User"     },
         :ad_password => { :description => "Active Directory Password" }
