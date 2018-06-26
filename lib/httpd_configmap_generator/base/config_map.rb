@@ -16,11 +16,11 @@ module HttpdConfigmapGenerator
       @config_map = template
     end
 
-    def generate(auth_type, realm = "undefined", file_list = nil, additional_data = {})
+    def generate(auth_type, realm = "undefined", file_list = nil, metadata = {})
       info_msg("Generating Auth Config-Map for #{auth_type}")
       @config_map = template(auth_type, realm)
       file_specs = gen_filespecs(file_list)
-      define_configuration(file_specs, additional_data)
+      define_configuration(file_specs, metadata)
       include_files(file_specs)
     end
 
@@ -135,7 +135,7 @@ module HttpdConfigmapGenerator
       }
     end
 
-    def update_configuration(file_specs, extra_data={})
+    def update_configuration(file_specs, metadata={})
       auth_configuration = fetch_auth_configuration
       return define_configuration(file_specs) unless auth_configuration
       # first, remove any file_specs references in the file list, we don't want duplication here.
@@ -146,7 +146,7 @@ module HttpdConfigmapGenerator
       end
       auth_configuration = auth_configuration.join("\n") + "\n"
       # now, append any of the new file_specs at the end of the list.
-      append_configuration(auth_configuration, file_specs, extra_data)
+      append_configuration(auth_configuration, file_specs, metadata)
     end
 
     def search_file_entry(target_file)
@@ -157,9 +157,9 @@ module HttpdConfigmapGenerator
       entry ? entry.first.split('=')[1].strip.split(' ') : nil
     end
 
-    def define_configuration(file_specs, extra_data={})
+    def define_configuration(file_specs, metadata={})
       auth_configuration = "# External Authentication Configuration File\n#\n"
-      append_configuration(auth_configuration, file_specs, extra_data)
+      append_configuration(auth_configuration, file_specs, metadata)
     end
 
     def include_files(file_specs)
@@ -175,14 +175,14 @@ module HttpdConfigmapGenerator
       file_spec[:binary] ? "#{file_spec[:basename]}.base64" : file_spec[:basename]
     end
 
-    def append_configuration(auth_configuration, file_specs, extra_data)
+    def append_configuration(auth_configuration, file_specs, metadata)
       file_specs.each do |file_spec|
         debug_msg("Adding file #{file_spec[:target]} ...")
         auth_configuration += "file = #{file_basename(file_spec)} #{file_spec[:target]} #{file_spec[:mode]}\n"
       end
       config_map[DATA_SECTION] ||= {}
 
-      extra_data.each do |key, value|
+      metadata.each do |key, value|
         config_map[DATA_SECTION].merge!(key => value)
       end
 

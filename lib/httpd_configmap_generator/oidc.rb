@@ -8,9 +8,12 @@ module HttpdConfigmapGenerator
 
     def required_options
       super.merge(
-        :oidc_url           => { :description => "OpenID-Connect Provider URL" },
-        :oidc_client_id     => { :description => "OpenID-Connect Provider Client ID" },
-        :oidc_client_secret => { :description => "OpenID-Connect Provider Client Secret" },
+        :oidc_url           => { :description => "OpenID-Connect Provider URL", 
+                                 :short       => "-u" },
+        :oidc_client_id     => { :description => "OpenID-Connect Provider Client ID",
+                                 :short       => "-i" },
+        :oidc_client_secret => { :description => "OpenID-Connect Provider Client Secret",
+                                 :short       => "-s" },
       )
     end
 

@@ -8,12 +8,13 @@ This documents how to run the httpd\_configmap\_generator tool to configure the 
 $ httpd_configmap_generator oidc --help
 Options:
   -o, --output=<s>                Configuration map file to create
-  -i, --oidc-url=<s>              OpenID-Connect Provider URL
-  -c, --oidc-client-id=<s>        OpenID-Connect Provider Client ID
-  -l, --oidc-client-secret=<s>    OpenID-Connect Provider Client Secret
+  -u, --oidc-url=<s>              OpenID-Connect Provider URL
+  -i, --oidc-client-id=<s>        OpenID-Connect Provider Client ID
+  -s, --oidc-client-secret=<s>    OpenID-Connect Provider Client Secret
   -f, --force                     Force configuration if configured already
   -d, --debug                     Enable debugging
   -h, --help                      Show this message
+
 ```
 
 ### Examples:
