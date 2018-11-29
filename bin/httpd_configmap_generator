@@ -8,7 +8,7 @@
 #
 
 Dir.chdir(__dir__) { require "bundler/setup" }
-require "trollop"
+require "optimist"
 require "httpd_configmap_generator"
 
 CMD = File.basename($PROGRAM_NAME)
@@ -23,7 +23,7 @@ module HttpdConfigmapGenerator
     SUB_COMMANDS = [HttpdConfigmapGenerator.supported_auth_types] | %w(update export)
 
     def run
-      Trollop.options do
+      Optimist.options do
         version("#{CMD} #{HttpdConfigmapGenerator::VERSION} - External Authentication Configuration script")
         banner <<-EOS
 #{version}
@@ -40,7 +40,7 @@ supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.join(', ')}
       end
 
       auth_type = ARGV.shift
-      Trollop.die "Must specify an authentication type" if auth_type.nil?
+      Optimist.die "Must specify an authentication type" if auth_type.nil?
 
       begin
         auth_config =
@@ -53,7 +53,7 @@ supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.join(', ')}
         error_msg(err.to_s)
       end
 
-      params = Trollop.options do
+      params = Optimist.options do
         auth_config.required_options.each do |key, key_options|
           opt key, key_options[:description], HttpdConfigmapGenerator::Cli.options_for(key_options, true)
         end
