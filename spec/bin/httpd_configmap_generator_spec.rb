@@ -8,7 +8,7 @@ describe "bin/httpd_configmap_generator" do
 
         Usage: httpd_configmap_generator auth_type | update | export [--help | options]
 
-        supported auth_type: active-directory, ipa, ldap, saml, oidc
+        supported auth_type: active-directory, ipa, ldap, oidc, saml
 
         httpd_configmap_generator options are:
           -V, --version    Version of the httpd_configmap_generator command
