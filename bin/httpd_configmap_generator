@@ -30,7 +30,7 @@ module HttpdConfigmapGenerator
 
 Usage: #{CMD} auth_type | update | export [--help | options]
 
-supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.join(', ')}
+supported auth_type: #{HttpdConfigmapGenerator.supported_auth_types.sort.join(', ')}
 
 #{CMD} options are:
       EOS
