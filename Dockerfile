@@ -11,6 +11,7 @@ ENV HTTPD_AUTH_TYPE=internal \
     HTTPD_AUTH_KERBEROS_REALMS=undefined \
     TERM=xterm
 
-RUN yum -y install openldap-clients pamtester
+RUN dnf -y --disableplugin=subscription-manager install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
+    dnf -y --disableplugin=subscription-manager install openldap-clients pamtester
 
 RUN gem install --no-ri --no-rdoc --no-document httpd_configmap_generator
