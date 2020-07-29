@@ -1,4 +1,4 @@
-FROM manageiq/httpd:latest
+FROM manageiq/httpd-init:latest
 MAINTAINER ManageIQ https://github.com/ManageIQ
 
 LABEL name="httpd-configmap-generator" \
