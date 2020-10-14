@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
+  s.add_development_dependency "manageiq-style"
   s.add_development_dependency "rspec",    "~> 3.0"
   s.add_development_dependency "rake"
   s.add_development_dependency "simplecov"
