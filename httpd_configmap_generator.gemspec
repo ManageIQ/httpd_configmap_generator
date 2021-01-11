@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) } - %w(console setup)
   s.require_paths = ["lib"]
 
-  s.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   s.add_development_dependency "manageiq-style"
   s.add_development_dependency "rspec",    "~> 3.0"
   s.add_development_dependency "rake"
