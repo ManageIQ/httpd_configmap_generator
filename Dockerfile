@@ -14,6 +14,7 @@ ENV HTTPD_AUTH_TYPE=internal \
 RUN dnf -y --disableplugin=subscription-manager install \
         https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf -y --disableplugin=subscription-manager install \
+        authselect-compat \
         openldap-clients \
         pamtester && \
     dnf clean all && \
