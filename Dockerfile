@@ -19,4 +19,5 @@ RUN dnf -y --disableplugin=subscription-manager install \
     dnf clean all && \
     rm -rf /var/cache/dnf
 
+RUN bundle config --global without development:test
 RUN gem install --no-document httpd_configmap_generator

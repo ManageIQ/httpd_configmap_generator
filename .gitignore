@@ -1,9 +1,7 @@
-Dockerfile.devel
 .rubocop-*
 /bundle/
 /.bundle/
 /.yardoc
-/Gemfile.lock
 /_yardoc/
 /coverage/
 /doc/
