@@ -19,4 +19,4 @@ RUN dnf -y --disableplugin=subscription-manager install \
     dnf clean all && \
     rm -rf /var/cache/dnf
 
-RUN gem install --no-ri --no-rdoc --no-document httpd_configmap_generator
+RUN gem install --no-document httpd_configmap_generator
