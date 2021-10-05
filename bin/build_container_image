@@ -11,7 +11,7 @@ docker build . -t localhost/build:latest
 if [[ $TRAVIS_BRANCH == "master" ]]; then
   VERSION=latest
 else
-  VERSION=$(docker run --rm --entrypoint bash localhost/build:latest -c "ruby -e \"require 'httpd_configmap_generator'; puts HttpdConfigmapGenerator::VERSION\"")
+  VERSION=v$(docker run --rm --entrypoint bash localhost/build:latest -c "ruby -e \"require 'httpd_configmap_generator'; puts HttpdConfigmapGenerator::VERSION\"")
 fi
 
 set -v
