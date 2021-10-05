@@ -1,0 +1,25 @@
+#!/bin/bash
+
+REGISTRY=${REGISTRY:-"docker.io"}
+ORGANIZATION=${ORGANIZATION:-"manageiq"}
+IMAGE_NAME=$REGISTRY/$ORGANIZATION/httpd_configmap_generator
+
+set -e
+
+docker build . -t localhost/build:latest
+
+VERSION=$(docker run --rm --entrypoint bash localhost/build:latest -c "ruby -e \"require 'httpd_configmap_generator'; puts HttpdConfigmapGenerator::VERSION\"")
+
+set -v
+docker tag localhost/build:latest $IMAGE_NAME:$VERSION
+set +v
+
+docker images
+
+[[ $TRAVIS_PULL_REQUEST != "false" ]] && exit 0
+
+echo "$REGISTRY_PASSWORD" | docker login $REGISTRY -u $REGISTRY_USERNAME --password-stdin
+
+docker push $IMAGE_NAME:$VERSION
+
+set +e
