@@ -8,7 +8,11 @@ set -e
 
 docker build . -t localhost/build:latest
 
-VERSION=$(docker run --rm --entrypoint bash localhost/build:latest -c "ruby -e \"require 'httpd_configmap_generator'; puts HttpdConfigmapGenerator::VERSION\"")
+if [[ $TRAVIS_BRANCH == "master" ]]; then
+  VERSION=latest
+else
+  VERSION=$(docker run --rm --entrypoint bash localhost/build:latest -c "ruby -e \"require 'httpd_configmap_generator'; puts HttpdConfigmapGenerator::VERSION\"")
+fi
 
 set -v
 docker tag localhost/build:latest $IMAGE_NAME:$VERSION
