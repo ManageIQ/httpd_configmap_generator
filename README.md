@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.org/ManageIQ/httpd_configmap_generator.svg?branch=master)](https://travis-ci.com/github/ManageIQ/httpd_configmap_generator)
 [![Code Climate](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator.svg)](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator)
 [![Test Coverage](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/httpd_configmap_generator/coverage)
-[![Security](https://hakiri.io/github/ManageIQ/httpd_configmap_generator/master.svg)](https://hakiri.io/github/ManageIQ/httpd_configmap_generator/master)
 
 [![Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ManageIQ/authentication?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
