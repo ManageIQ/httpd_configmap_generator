@@ -37,7 +37,7 @@ module HttpdConfigmapGenerator
     def configure_ifp
       add_service("ifp")
       ifp = section("ifp")
-      ifp["allowed_uids"] = "#{APACHE_USER}, root"
+      ifp["allowed_uids"] = "#{APACHE_USER}, root, manageiq"
       ifp["user_attributes"] = LDAP_ATTRS.keys.collect { |k| "+#{k}" }.join(", ")
     end
 
