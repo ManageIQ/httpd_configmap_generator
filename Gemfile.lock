@@ -62,19 +62,19 @@ GEM
     rake (13.3.0)
     regexp_parser (2.11.3)
     rexml (3.4.4)
-    rspec (3.13.1)
+    rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
       rspec-mocks (~> 3.13.0)
-    rspec-core (3.13.5)
+    rspec-core (3.13.7)
       rspec-support (~> 3.13.0)
-    rspec-expectations (3.13.5)
+    rspec-expectations (3.13.6)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.6)
+    rspec-mocks (3.13.9)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-support (3.13.6)
+    rspec-support (3.13.8)
     rubocop (1.56.3)
       base64 (~> 0.1.1)
       json (~> 2.3)
@@ -116,7 +116,7 @@ PLATFORMS
 
 DEPENDENCIES
   httpd_configmap_generator!
-  manageiq-style (>= 1.5.4)
+  manageiq-style
   rake
   rspec (~> 3.0)
   simplecov
