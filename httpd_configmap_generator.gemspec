@@ -31,6 +31,6 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport",        ">=5.0"
   s.add_dependency "awesome_spawn",        "~> 1.4"
   s.add_dependency "iniparse",             "~> 1.4"
-  s.add_dependency "more_core_extensions", "~> 3.4"
+  s.add_dependency "more_core_extensions", "~> 4.0"
   s.add_dependency "optimist",             "~> 3.0"
 end
