@@ -24,7 +24,7 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
     ast (2.4.3)
-    awesome_spawn (1.6.0)
+    awesome_spawn (1.7.0)
     base64 (0.1.2)
     benchmark (0.4.1)
     bigdecimal (3.3.1)
@@ -116,7 +116,7 @@ PLATFORMS
 
 DEPENDENCIES
   httpd_configmap_generator!
-  manageiq-style (>= 1.5.4)
+  manageiq-style
   rake
   rspec (~> 3.0)
   simplecov
